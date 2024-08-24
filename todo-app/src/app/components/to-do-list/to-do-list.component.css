@@ -44,32 +44,46 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  width: 100%;
+}
+
+.task-input-field {
+  flex: 1;
+  display: flex;
+  align-items: center;
 }
 
 .task-input {
+  width: 100%;
   padding: 10px;
-  flex-grow: 1;
   border: 1px solid #666;
   border-radius: 4px;
+  height: 40px;
+  box-sizing: border-box;
 }
 
-.add-button,
-.delete-button {
-  padding: 10px 20px;
-  cursor: pointer;
-  border: 1px solid #666;
-  border-radius: 4px;
-  flex-shrink: 0;
-  width: 100px;
-  text-align: center;
-}
-
-.add-button {
-  background-color: #9370db;
+.button {
   color: white;
+  border: none;
+  border-radius: 5px;
+  height: 40px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+  cursor: pointer;
 }
 
-.delete-button {
-  background-color: #f9f9f9;
-  color: black;
+.button--add {
+  background-color: green;
+  align-self: center;
+}
+
+.button--delete {
+  background-color: red;
+}
+
+.button:disabled {
+  opacity: 0.5;
 }

@@ -1,1 +1,11 @@
-/* You can add global styles to this file, and also import other style files */
+.mat-form-field {
+  width: 100%;
+}
+
+.mat-form-field .mat-mdc-form-field-flex {
+  align-items: center;
+}
+
+.mat-form-field .mat-mdc-form-field-infix {
+  width: 100%;
+}

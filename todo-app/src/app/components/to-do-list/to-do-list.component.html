@@ -1,19 +1,27 @@
-<div class="outer-container">
-  <div class="task-container">
-    <h1 class="title">{{ title }}</h1>
-    <ul class="task-list">
-      <li class="task-item" *ngFor="let task of tasks">
-        {{ task }}
-        <button class="delete-button" (click)="deleteTask(task)">
-          {{ deleteButtonTitle }}
-        </button>
-      </li>
-    </ul>
-    <div class="input-container">
-      <input class="task-input" [(ngModel)]="newTask" placeholder="New task" />
-      <button class="add-button" (click)="addTask()">
-        {{ addButtonTitle }}
-      </button>
-    </div>
+<div class="task-container">
+  <h1 class="title">{{ title }}</h1>
+  <ul class="task-list">
+    <app-to-do-list-item
+      *ngFor="let task of tasks"
+      [item]="task"
+      (delete)="deleteTask($event)"
+    ></app-to-do-list-item>
+  </ul>
+  <div class="input-container">
+    <mat-form-field class="task-input-field">
+      <input
+        matInput
+        class="task-input"
+        [(ngModel)]="newTask"
+        placeholder="New task"
+      />
+    </mat-form-field>
+    <button
+      class="button button--add"
+      [disabled]="!newTask.trim()"
+      (click)="addTask()"
+    >
+      {{ addButtonTitle }}
+    </button>
   </div>
 </div>
