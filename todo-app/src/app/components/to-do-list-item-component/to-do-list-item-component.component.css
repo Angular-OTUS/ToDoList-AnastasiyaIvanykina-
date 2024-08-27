@@ -1,0 +1,35 @@
+.task-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+  background-color: #f9f9f9;
+  margin-bottom: 5px;
+  border-radius: 4px;
+}
+
+.button {
+  color: white;
+  border: none;
+  border-radius: 5px;
+  height: 40px;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0;
+}
+
+.button--add {
+  background-color: green;
+}
+
+.button--delete {
+  background-color: red;
+}
+
+.button:disabled {
+  opacity: 0.5;
+}
