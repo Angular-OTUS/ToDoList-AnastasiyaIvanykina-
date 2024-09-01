@@ -1,27 +1,31 @@
-<div class="task-container">
-  <h1 class="title">{{ title }}</h1>
-  <ul class="task-list">
-    <app-to-do-list-item
-      *ngFor="let task of tasks"
-      [item]="task"
-      (delete)="deleteTask($event)"
-    ></app-to-do-list-item>
-  </ul>
-  <div class="input-container">
-    <mat-form-field class="task-input-field">
-      <input
-        matInput
-        class="task-input"
-        [(ngModel)]="newTask"
-        placeholder="New task"
-      />
-    </mat-form-field>
-    <button
-      class="button button--add"
-      [disabled]="!newTask.trim()"
-      (click)="addTask()"
-    >
-      {{ addButtonTitle }}
-    </button>
+<div *ngIf="isLoading" class="spinner">
+  <mat-spinner></mat-spinner>
+</div>
+<div *ngIf="!isLoading" class="outer-container">
+  <div class="task-container">
+    <h1 class="title">{{ title }}</h1>
+    <ul class="task-list">
+      <app-to-do-list-item
+        *ngFor="let task of tasks"
+        [item]="task"
+        (delete)="deleteTask($event)"
+      ></app-to-do-list-item>
+    </ul>
+    <div class="input-container">
+      <mat-form-field class="task-input-field">
+        <input
+          matInput
+          class="task-input"
+          [(ngModel)]="newTask"
+          placeholder="New task"
+        />
+      </mat-form-field>
+      <app-button
+        [title]="addButtonTitle"
+        [disabled]="!newTask.trim()"
+        (click)="addTask()"
+        class="button--add"
+      ></app-button>
+    </div>
   </div>
 </div>

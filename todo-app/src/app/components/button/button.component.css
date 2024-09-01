@@ -1,0 +1,11 @@
+@import '../../../app/app.component.css';
+
+.button--add {
+  background-color: green;
+  height: 56px;
+  margin-bottom: 20px;
+}
+
+.button--delete {
+  background-color: red;
+}

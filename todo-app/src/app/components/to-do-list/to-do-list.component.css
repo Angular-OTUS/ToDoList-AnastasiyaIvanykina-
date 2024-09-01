@@ -1,3 +1,12 @@
+@import '../../../app/app.component.css';
+
+.spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
 .outer-container {
   display: flex;
   justify-content: center;
@@ -9,12 +18,12 @@
 
 .task-container {
   width: 600px;
-  margin: 0 auto;
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 8px;
   background-color: #fff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin: 0 auto 20px;
 }
 
 .title {
@@ -45,6 +54,8 @@
   align-items: center;
   gap: 10px;
   width: 100%;
+  margin-top: 20px;
+  justify-content: center;
 }
 
 .task-input-field {
@@ -60,30 +71,4 @@
   border-radius: 4px;
   height: 40px;
   box-sizing: border-box;
-}
-
-.button {
-  color: white;
-  border: none;
-  border-radius: 5px;
-  height: 40px;
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 18px;
-  cursor: pointer;
-}
-
-.button--add {
-  background-color: green;
-  align-self: center;
-}
-
-.button--delete {
-  background-color: red;
-}
-
-.button:disabled {
-  opacity: 0.5;
 }
