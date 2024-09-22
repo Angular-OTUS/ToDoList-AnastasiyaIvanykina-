@@ -2,7 +2,7 @@
   {{ item.text }}
   <app-button
     [title]="'Delete'"
-    (click)="deleteItem()"
-    class="button-delete"
+    [buttonClasses]="{ 'button--delete': true }"
+    (buttonClick)="deleteItem()"
   ></app-button>
 </li>

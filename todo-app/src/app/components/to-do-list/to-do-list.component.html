@@ -23,8 +23,8 @@
       <app-button
         [title]="addButtonTitle"
         [disabled]="!newTask.trim()"
-        (click)="addTask()"
-        class="button--add"
+        [buttonClasses]="{ 'button--add': true }"
+        (buttonClick)="addTask()"
       ></app-button>
     </div>
   </div>

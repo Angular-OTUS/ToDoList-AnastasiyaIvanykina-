@@ -1,10 +1,8 @@
 <button
   class="button-common"
-  [ngClass]="{
-    'button--add': title === 'Add task',
-    'button--delete': title === 'Delete',
-  }"
+  [ngClass]="buttonClasses"
   [disabled]="disabled"
+  (click)="onClick()"
 >
   {{ title }}
 </button>
