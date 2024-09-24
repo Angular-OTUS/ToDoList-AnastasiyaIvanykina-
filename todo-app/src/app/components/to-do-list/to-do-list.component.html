@@ -2,13 +2,31 @@
   <div class="task-container">
     <h1 class="title">{{ title }}</h1>
     <ul class="task-list">
-      <app-to-do-list-item
+      <li
         *ngFor="let task of tasks"
-        [item]="task"
-        (delete)="deleteTask($event)"
-        (click)="selectTask(task.id)"
         [ngClass]="{ selected: task.id === selectedItemId }"
-      ></app-to-do-list-item>
+        (click)="selectTask(task.id, $event)"
+      >
+        <div
+          class="task-item"
+          [ngClass]="{ selected: task.id === selectedItemId }"
+        >
+          <span (click)="toggleDescription(task.id, $event)">
+            {{ task.text }}
+          </span>
+          <textarea
+            *ngIf="task.showDescriptionFlag"
+            class="task-description"
+            [(ngModel)]="task.description"
+          ></textarea>
+          <app-button
+            [title]="'Delete'"
+            [buttonClasses]="{ 'button--delete': true }"
+            (click)="deleteTask(task.id, $event)"
+            tooltipText="Delete this task"
+          ></app-button>
+        </div>
+      </li>
     </ul>
     <div class="input-container">
       <div class="input-block">
@@ -32,7 +50,7 @@
           [title]="addButtonTitle"
           [disabled]="!newTask.trim() || !newDescription.trim()"
           [buttonClasses]="{ 'button--add': true }"
-          (buttonClick)="addTask()"
+          (click)="addTask()"
           tooltipText="Add this task"
         ></app-button>
       </div>

@@ -1,4 +1,9 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ViewEncapsulation,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ToDoListItemComponent } from '../to-do-list-item-component/to-do-list-item-component.component';
@@ -24,18 +29,31 @@ import { ButtonComponent } from '../button/button.component';
 export class ToDoListComponent implements OnInit {
   title: string = 'ToDo-list';
   addButtonTitle: string = 'Add task';
-  tasks: { id: number; text: string; description: string }[] = [
-    { id: 1, text: 'Buy a Porsche', description: 'Purchase a new Porsche car' },
+  tasks: {
+    id: number;
+    text: string;
+    description: string;
+    showDescriptionFlag?: boolean;
+  }[] = [
+    {
+      id: 1,
+      text: 'Buy a Porsche',
+      description: 'Purchase a new Porsche car',
+      showDescriptionFlag: false,
+    },
     {
       id: 2,
       text: 'Take a walk with the dog',
       description: 'Walk the dog in the park',
+      showDescriptionFlag: false,
     },
   ];
   newTask: string = '';
   newDescription: string = '';
   selectedItemId: number | null = null;
   isLoading: boolean = true;
+
+  constructor(private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     setTimeout(() => {
@@ -50,17 +68,30 @@ export class ToDoListComponent implements OnInit {
         id: maxId + 1,
         text: this.newTask.trim(),
         description: this.newDescription.trim(),
+        showDescriptionFlag: false,
       });
       this.newTask = '';
       this.newDescription = '';
     }
   }
 
-  deleteTask(taskId: number): void {
+  deleteTask(taskId: number, event: Event): void {
+    event.stopPropagation();
     this.tasks = this.tasks.filter((task) => task.id !== taskId);
   }
 
-  selectTask(taskId: number): void {
+  selectTask(taskId: number, event: Event): void {
+    event.stopPropagation();
+    console.log('Selected Task ID:', taskId);
     this.selectedItemId = taskId;
+    this.cdr.detectChanges();
+  }
+
+  toggleDescription(taskId: number, event: Event): void {
+    event.stopPropagation();
+    const task = this.tasks.find((t) => t.id === taskId);
+    if (task) {
+      task.showDescriptionFlag = !task.showDescriptionFlag;
+    }
   }
 }

@@ -1,7 +1,7 @@
-<div class="task-container">
+<div class="task-item">
   <li
     class="task-item"
-    (click)="toggleDescription()"
+    (click)="toggleDescription($event)"
     [appTooltip]="showDescriptionFlag ? 'Hide description' : 'Show description'"
   >
     <span class="tooltip">{{
@@ -15,9 +15,9 @@
     [(ngModel)]="item.description"
   ></textarea>
   <app-button
-    [title]="'Delete'"
+    [title]="deleteButtonTitle"
     [buttonClasses]="{ 'button--delete': true }"
-    (buttonClick)="deleteItem()"
+    (click)="deleteItem($event)"
     tooltipText="Delete this task"
   ></app-button>
 </div>

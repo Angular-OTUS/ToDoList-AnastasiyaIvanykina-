@@ -134,5 +134,6 @@
 }
 
 .selected {
-  background-color: #d3d3d3;
+  background-color: lightskyblue;
+  border-radius: 4px;
 }
