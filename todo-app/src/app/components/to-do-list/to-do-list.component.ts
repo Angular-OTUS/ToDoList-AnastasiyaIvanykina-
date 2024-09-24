@@ -24,11 +24,17 @@ import { ButtonComponent } from '../button/button.component';
 export class ToDoListComponent implements OnInit {
   title: string = 'ToDo-list';
   addButtonTitle: string = 'Add task';
-  tasks: { id: number; text: string }[] = [
-    { id: 1, text: 'Buy a Porsche' },
-    { id: 2, text: 'Take a walk with the dog' },
+  tasks: { id: number; text: string; description: string }[] = [
+    { id: 1, text: 'Buy a Porsche', description: 'Purchase a new Porsche car' },
+    {
+      id: 2,
+      text: 'Take a walk with the dog',
+      description: 'Walk the dog in the park',
+    },
   ];
   newTask: string = '';
+  newDescription: string = '';
+  selectedItemId: number | null = null;
   isLoading: boolean = true;
 
   ngOnInit(): void {
@@ -38,14 +44,23 @@ export class ToDoListComponent implements OnInit {
   }
 
   addTask(): void {
-    if (this.newTask.trim()) {
+    if (this.newTask.trim() && this.newDescription.trim()) {
       const maxId = Math.max(...this.tasks.map((task) => task.id));
-      this.tasks.push({ id: maxId + 1, text: this.newTask.trim() });
+      this.tasks.push({
+        id: maxId + 1,
+        text: this.newTask.trim(),
+        description: this.newDescription.trim(),
+      });
       this.newTask = '';
+      this.newDescription = '';
     }
   }
 
   deleteTask(taskId: number): void {
     this.tasks = this.tasks.filter((task) => task.id !== taskId);
+  }
+
+  selectTask(taskId: number): void {
+    this.selectedItemId = taskId;
   }
 }

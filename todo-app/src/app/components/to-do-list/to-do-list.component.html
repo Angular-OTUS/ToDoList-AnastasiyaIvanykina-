@@ -1,6 +1,3 @@
-<div *ngIf="isLoading" class="spinner">
-  <mat-spinner></mat-spinner>
-</div>
 <div *ngIf="!isLoading" class="outer-container">
   <div class="task-container">
     <h1 class="title">{{ title }}</h1>
@@ -9,23 +6,36 @@
         *ngFor="let task of tasks"
         [item]="task"
         (delete)="deleteTask($event)"
+        (click)="selectTask(task.id)"
+        [ngClass]="{ selected: task.id === selectedItemId }"
       ></app-to-do-list-item>
     </ul>
     <div class="input-container">
-      <mat-form-field class="task-input-field">
-        <input
-          matInput
-          class="task-input"
-          [(ngModel)]="newTask"
-          placeholder="New task"
-        />
-      </mat-form-field>
-      <app-button
-        [title]="addButtonTitle"
-        [disabled]="!newTask.trim()"
-        [buttonClasses]="{ 'button--add': true }"
-        (buttonClick)="addTask()"
-      ></app-button>
+      <div class="input-block">
+        <mat-form-field class="task-input-field">
+          <input
+            matInput
+            class="task-input"
+            [(ngModel)]="newTask"
+            placeholder="New task"
+          />
+        </mat-form-field>
+        <mat-form-field class="task-input-field">
+          <textarea
+            matInput
+            class="task-input"
+            [(ngModel)]="newDescription"
+            placeholder="Task description"
+          ></textarea>
+        </mat-form-field>
+        <app-button
+          [title]="addButtonTitle"
+          [disabled]="!newTask.trim() || !newDescription.trim()"
+          [buttonClasses]="{ 'button--add': true }"
+          (buttonClick)="addTask()"
+          tooltipText="Add this task"
+        ></app-button>
+      </div>
     </div>
   </div>
 </div>
