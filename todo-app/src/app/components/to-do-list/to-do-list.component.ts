@@ -33,19 +33,16 @@ export class ToDoListComponent implements OnInit {
     id: number;
     text: string;
     description: string;
-    showDescriptionFlag?: boolean;
   }[] = [
     {
       id: 1,
       text: 'Buy a Porsche',
       description: 'Purchase a new Porsche car',
-      showDescriptionFlag: false,
     },
     {
       id: 2,
       text: 'Take a walk with the dog',
       description: 'Walk the dog in the park',
-      showDescriptionFlag: false,
     },
   ];
   newTask: string = '';
@@ -68,15 +65,13 @@ export class ToDoListComponent implements OnInit {
         id: maxId + 1,
         text: this.newTask.trim(),
         description: this.newDescription.trim(),
-        showDescriptionFlag: false,
       });
       this.newTask = '';
       this.newDescription = '';
     }
   }
 
-  deleteTask(taskId: number, event: Event): void {
-    event.stopPropagation();
+  deleteTask(taskId: number): void {
     this.tasks = this.tasks.filter((task) => task.id !== taskId);
   }
 
@@ -89,9 +84,6 @@ export class ToDoListComponent implements OnInit {
 
   toggleDescription(taskId: number, event: Event): void {
     event.stopPropagation();
-    const task = this.tasks.find((t) => t.id === taskId);
-    if (task) {
-      task.showDescriptionFlag = !task.showDescriptionFlag;
-    }
+    this.selectedItemId = this.selectedItemId === taskId ? null : taskId;
   }
 }

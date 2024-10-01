@@ -13,9 +13,9 @@ import { SharedModule } from '../../shared/shared.module';
 })
 export class ToDoListItemComponent {
   @Input() item!: { id: number; text: string; description: string };
+  @Input() selectedItemId!: number | null;
   @Output() delete = new EventEmitter<number>();
   deleteButtonTitle: string = 'Delete';
-  showDescriptionFlag: boolean = false;
 
   deleteItem(event: Event): void {
     event.stopPropagation();
@@ -24,6 +24,7 @@ export class ToDoListItemComponent {
 
   toggleDescription(event: Event): void {
     event.stopPropagation();
-    this.showDescriptionFlag = !this.showDescriptionFlag;
+    this.selectedItemId =
+      this.selectedItemId === this.item.id ? null : this.item.id;
   }
 }

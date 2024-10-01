@@ -15,14 +15,14 @@
             {{ task.text }}
           </span>
           <textarea
-            *ngIf="task.showDescriptionFlag"
+            *ngIf="task.id === selectedItemId"
             class="task-description"
             [(ngModel)]="task.description"
           ></textarea>
           <app-button
             [title]="'Delete'"
             [buttonClasses]="{ 'button--delete': true }"
-            (click)="deleteTask(task.id, $event)"
+            (click)="deleteTask(task.id)"
             tooltipText="Delete this task"
           ></app-button>
         </div>

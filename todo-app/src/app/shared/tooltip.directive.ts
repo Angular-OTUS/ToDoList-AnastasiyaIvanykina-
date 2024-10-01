@@ -4,37 +4,20 @@ import {
   HostListener,
   Input,
   Renderer2,
+  OnDestroy,
 } from '@angular/core';
 
 @Directive({
   selector: '[appTooltip]',
 })
-export class TooltipDirective {
+export class TooltipDirective implements OnDestroy {
   @Input('appTooltip') tooltipText: string = '';
-  tooltipElement: HTMLElement;
+  private tooltipElement: HTMLElement | null = null;
 
   constructor(
     private el: ElementRef,
     private renderer: Renderer2,
-  ) {
-    this.tooltipElement = this.renderer.createElement('span');
-    this.renderer.appendChild(this.el.nativeElement, this.tooltipElement);
-    this.renderer.setStyle(this.tooltipElement, 'position', 'absolute');
-    this.renderer.setStyle(this.tooltipElement, 'background', '#4242428f');
-    this.renderer.setStyle(this.tooltipElement, 'color', '#fff');
-    this.renderer.setStyle(this.tooltipElement, 'padding', '5px 10px');
-    this.renderer.setStyle(this.tooltipElement, 'borderRadius', '4px');
-    this.renderer.setStyle(this.tooltipElement, 'top', '-30px');
-    this.renderer.setStyle(this.tooltipElement, 'left', '50%');
-    this.renderer.setStyle(
-      this.tooltipElement,
-      'transform',
-      'translateX(-50%)',
-    );
-    this.renderer.setStyle(this.tooltipElement, 'whiteSpace', 'nowrap');
-    this.renderer.setStyle(this.tooltipElement, 'display', 'none');
-    this.renderer.setStyle(this.tooltipElement, 'zIndex', '1000');
-  }
+  ) {}
 
   @HostListener('mouseenter') onMouseEnter() {
     this.showTooltip();
@@ -44,30 +27,48 @@ export class TooltipDirective {
     this.hideTooltip();
   }
 
-  @HostListener('click') onClick() {
-    this.showTooltip();
-  }
-
-  showTooltip() {
-    if (this.el.nativeElement.disabled) {
-      this.renderer.setStyle(this.tooltipElement, 'background', '#4242428f');
-      this.renderer.setProperty(
-        this.tooltipElement,
-        'innerText',
-        'Fill the fields',
-      );
-    } else {
-      this.renderer.setStyle(this.tooltipElement, 'background', '#333');
-      this.renderer.setProperty(
-        this.tooltipElement,
-        'innerText',
-        this.tooltipText,
-      );
+  private createTooltip() {
+    if (!this.tooltipElement) {
+      this.tooltipElement = this.renderer.createElement('span');
+      this.renderer.appendChild(document.body, this.tooltipElement);
+      this.renderer.addClass(this.tooltipElement, 'tooltip');
     }
-    this.renderer.setStyle(this.tooltipElement, 'display', 'block');
   }
 
-  hideTooltip() {
-    this.renderer.setStyle(this.tooltipElement, 'display', 'none');
+  private setTooltipContent() {
+    const message = this.el.nativeElement.disabled
+      ? 'Fill the fields'
+      : this.tooltipText;
+    const background = this.el.nativeElement.disabled ? '#4242428f' : '#333';
+    this.renderer.setStyle(this.tooltipElement, 'background', background);
+    this.renderer.setProperty(this.tooltipElement, 'innerText', message);
+  }
+
+  private showTooltip() {
+    this.createTooltip();
+    this.setTooltipContent();
+    if (this.tooltipElement) {
+      this.renderer.setStyle(this.tooltipElement, 'display', 'block');
+      const hostPos = this.el.nativeElement.getBoundingClientRect();
+      const tooltipPos = this.tooltipElement.getBoundingClientRect();
+      const top = hostPos.top - tooltipPos.height - 10 + window.scrollY;
+      const left =
+        hostPos.left + (hostPos.width - tooltipPos.width) / 2 + window.scrollX;
+      this.renderer.setStyle(this.tooltipElement, 'top', `${top}px`);
+      this.renderer.setStyle(this.tooltipElement, 'left', `${left}px`);
+    }
+  }
+
+  private hideTooltip() {
+    if (this.tooltipElement) {
+      this.renderer.setStyle(this.tooltipElement, 'display', 'none');
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.tooltipElement) {
+      this.renderer.removeChild(document.body, this.tooltipElement);
+      this.tooltipElement = null;
+    }
   }
 }

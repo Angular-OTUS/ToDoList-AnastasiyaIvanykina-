@@ -2,15 +2,17 @@
   <li
     class="task-item"
     (click)="toggleDescription($event)"
-    [appTooltip]="showDescriptionFlag ? 'Hide description' : 'Show description'"
+    [appTooltip]="
+      selectedItemId === item.id ? 'Hide description' : 'Show description'
+    "
   >
     <span class="tooltip">{{
-      showDescriptionFlag ? 'Hide description' : 'Show description'
+      selectedItemId === item.id ? 'Hide description' : 'Show description'
     }}</span>
     <span>{{ item.text }}</span>
   </li>
   <textarea
-    *ngIf="showDescriptionFlag"
+    *ngIf="selectedItemId === item.id"
     class="task-description"
     [(ngModel)]="item.description"
   ></textarea>
