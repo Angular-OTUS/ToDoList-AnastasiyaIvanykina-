@@ -10,17 +10,14 @@
         [ngClass]="{ selected: task.id === selectedItemId }"
         (click)="selectTask(task.id, $event)"
       >
-        <div
-          class="task-item"
-          [formGroup]="taskForm"
-          [ngClass]="{ selected: task.id === selectedItemId }"
-        >
+        <div class="task-item" [formGroup]="editTaskForm">
           <span
             *ngIf="task.id !== editingTaskId"
             (dblclick)="editTask(task.id)"
-          >{{ task.text }}</span
           >
-          <input *ngIf="task.id === editingTaskId" formControlName="newTask" />
+            {{ task.text }}
+          </span>
+          <input *ngIf="task.id === editingTaskId" formControlName="editTask" />
           <div class="button-group">
             <app-button
               *ngIf="task.id === editingTaskId"
@@ -33,7 +30,7 @@
           <textarea
             *ngIf="task.id === selectedItemId"
             class="task-description"
-            formControlName="newDescription"
+            formControlName="editDescription"
             (click)="toggleDescription(task.id, $event)"
           ></textarea>
           <app-button
@@ -47,7 +44,7 @@
     </ul>
     <div class="input-container">
       <div class="input-block">
-        <form [formGroup]="taskForm" (ngSubmit)="addTask()">
+        <form [formGroup]="addTaskForm" (ngSubmit)="addTask()">
           <mat-form-field class="task-input-field">
             <input
               matInput
@@ -66,7 +63,7 @@
           </mat-form-field>
           <app-button
             [title]="addButtonTitle"
-            [disabled]="taskForm.invalid"
+            [disabled]="addTaskForm.invalid"
             [buttonClasses]="{ 'button--add': true }"
             tooltipText="Add this task"
           ></app-button>

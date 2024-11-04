@@ -42,7 +42,8 @@ export class ToDoListComponent implements OnInit, OnDestroy {
   title: string = 'ToDo-list';
   addButtonTitle: string = 'Add task';
   tasks!: Observable<Task[]>;
-  taskForm: FormGroup;
+  addTaskForm: FormGroup;
+  editTaskForm: FormGroup;
   selectedItemId: number | null = null;
   editingTaskId: number | null = null;
   isLoading: boolean = true;
@@ -54,9 +55,14 @@ export class ToDoListComponent implements OnInit, OnDestroy {
     private todoService: TodoService,
     private toastService: ToastService,
   ) {
-    this.taskForm = this.fb.group({
+    this.addTaskForm = this.fb.group({
       newTask: ['', Validators.required],
       newDescription: ['', Validators.required],
+    });
+
+    this.editTaskForm = this.fb.group({
+      editTask: ['', Validators.required],
+      editDescription: ['', Validators.required],
     });
   }
 
@@ -77,16 +83,16 @@ export class ToDoListComponent implements OnInit, OnDestroy {
   }
 
   addTask(): void {
-    if (this.taskForm.valid) {
+    if (this.addTaskForm.valid) {
       this.tasks.pipe(first(), takeUntil(this.destroy$)).subscribe({
         next: (tasks) => {
           const maxId = Math.max(...tasks.map((task: Task) => task.id));
           this.todoService.addTask({
             id: maxId + 1,
-            text: this.taskForm.value.newTask.trim(),
-            description: this.taskForm.value.newDescription.trim(),
+            text: this.addTaskForm.value.newTask.trim(),
+            description: this.addTaskForm.value.newDescription.trim(),
           });
-          this.taskForm.reset();
+          this.addTaskForm.reset();
           this.toastService.showToast('Task added successfully!');
         },
         error: (err) => {
@@ -122,9 +128,9 @@ export class ToDoListComponent implements OnInit, OnDestroy {
       )
       .subscribe((task) => {
         if (task) {
-          this.taskForm.patchValue({
-            newTask: task.text,
-            newDescription: task.description,
+          this.editTaskForm.patchValue({
+            editTask: task.text,
+            editDescription: task.description,
           });
         } else {
           this.toastService.showToast('Task not found!');
@@ -135,12 +141,12 @@ export class ToDoListComponent implements OnInit, OnDestroy {
   saveTask(taskId: number): void {
     const updatedTask: Task = {
       id: taskId,
-      text: this.taskForm.get('newTask')?.value,
-      description: this.taskForm.get('newDescription')?.value,
+      text: this.editTaskForm.get('editTask')?.value,
+      description: this.editTaskForm.get('editDescription')?.value,
     };
     this.todoService.updateTask(updatedTask.id, updatedTask.text);
     this.editingTaskId = null;
-    this.taskForm.reset();
+    this.editTaskForm.reset();
     this.toastService.showToast('Task updated successfully!');
   }
 

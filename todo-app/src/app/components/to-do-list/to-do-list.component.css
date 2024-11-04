@@ -1,3 +1,6 @@
+Чтобы наследование стилей и всплытие событий работали так же, как в старом коде, нужно убедиться, что стили применяются к родительскому элементу и наследуются дочерними элементами. В твоем случае, это можно сделать, применяя класс selected к элементу li и обеспечивая, чтобы дочерние элементы наследовали стили.
+
+Обновленный CSS
 .spinner {
   display: flex;
   justify-content: center;
@@ -136,4 +139,9 @@
 .selected {
   background-color: lightskyblue;
   border-radius: 4px;
+}
+
+.selected .task-item {
+  background-color: inherit;
+  border-radius: inherit;
 }
