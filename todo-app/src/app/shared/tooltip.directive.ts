@@ -9,6 +9,7 @@ import {
 
 @Directive({
   selector: '[appTooltip]',
+  standalone: true,
 })
 export class TooltipDirective implements OnDestroy {
   @Input('appTooltip') tooltipText: string = '';

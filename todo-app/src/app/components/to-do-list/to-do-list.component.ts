@@ -21,6 +21,8 @@ import { TodoService, Task } from '../../services/todo.service';
 import { ToastService } from '../../services/toast.service';
 import { Observable, Subject } from 'rxjs';
 import { map, first, takeUntil, delay } from 'rxjs/operators';
+import { ClickDirective } from '../../shared/click.directive';
+import { TooltipDirective } from '../../shared/tooltip.directive';
 
 @Component({
   selector: 'app-to-do-list',
@@ -33,6 +35,8 @@ import { map, first, takeUntil, delay } from 'rxjs/operators';
     MatInputModule,
     MatProgressSpinnerModule,
     ButtonComponent,
+    ClickDirective,
+    TooltipDirective,
   ],
   templateUrl: './to-do-list.component.html',
   styleUrls: ['./to-do-list.component.css'],
@@ -44,6 +48,7 @@ export class ToDoListComponent implements OnInit, OnDestroy {
   tasks!: Observable<Task[]>;
   addTaskForm: FormGroup;
   editTaskForm: FormGroup;
+  viewTaskForm: FormGroup;
   selectedItemId: number | null = null;
   editingTaskId: number | null = null;
   isLoading: boolean = true;
@@ -63,6 +68,11 @@ export class ToDoListComponent implements OnInit, OnDestroy {
     this.editTaskForm = this.fb.group({
       editTask: ['', Validators.required],
       editDescription: ['', Validators.required],
+    });
+
+    this.viewTaskForm = this.fb.group({
+      viewTask: ['', Validators.required],
+      viewDescription: ['', Validators.required],
     });
   }
 
@@ -94,6 +104,7 @@ export class ToDoListComponent implements OnInit, OnDestroy {
           });
           this.addTaskForm.reset();
           this.toastService.showToast('Task added successfully!');
+          this.editingTaskId = null; // Сбросить editingTaskId
         },
         error: (err) => {
           console.error('Error adding task:', err);
@@ -103,12 +114,13 @@ export class ToDoListComponent implements OnInit, OnDestroy {
     }
   }
 
-  deleteTask(taskId: number): void {
+  deleteTask(taskId: number, event: Event): void {
+    event.stopPropagation();
     this.todoService.deleteTask(taskId);
     this.toastService.showToast('Task deleted successfully!');
   }
 
-  selectTask(taskId: number, event: Event): void {
+  handleClick(taskId: number, event: Event): void {
     event.stopPropagation();
     if (this.editingTaskId !== null && this.editingTaskId !== taskId) {
       this.showConfirmationModal(taskId);
@@ -144,7 +156,7 @@ export class ToDoListComponent implements OnInit, OnDestroy {
       text: this.editTaskForm.get('editTask')?.value,
       description: this.editTaskForm.get('editDescription')?.value,
     };
-    this.todoService.updateTask(updatedTask.id, updatedTask.text);
+    this.todoService.updateTask(updatedTask);
     this.editingTaskId = null;
     this.editTaskForm.reset();
     this.toastService.showToast('Task updated successfully!');

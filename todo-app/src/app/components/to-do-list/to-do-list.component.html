@@ -8,67 +8,67 @@
       <li
         *ngFor="let task of tasks | async; trackBy: trackByTaskId"
         [ngClass]="{ selected: task.id === selectedItemId }"
-        (click)="selectTask(task.id, $event)"
+        appClick
+        (singleClick)="handleClick(task.id, $event)"
+        (doubleClick)="editTask(task.id)"
       >
-        <div class="task-item" [formGroup]="editTaskForm">
-          <span
-            *ngIf="task.id !== editingTaskId"
-            (dblclick)="editTask(task.id)"
-          >
-            {{ task.text }}
-          </span>
-          <input *ngIf="task.id === editingTaskId" formControlName="editTask" />
-          <div class="button-group">
-            <app-button
-              *ngIf="task.id === editingTaskId"
-              [title]="'Save'"
-              [buttonClasses]="{ 'button--save': true }"
-              (click)="saveTask(task.id)"
-              tooltipText="Save changes"
-            ></app-button>
-          </div>
-          <textarea
-            *ngIf="task.id === selectedItemId"
-            class="task-description"
-            formControlName="editDescription"
-            (click)="toggleDescription(task.id, $event)"
-          ></textarea>
+        <div class="task-item">
+          <ng-container *ngIf="task.id !== editingTaskId; else editMode">
+            <form [formGroup]="viewTaskForm">
+              <span>{{ task.text }}</span>
+              <div *ngIf="task.id === selectedItemId" class="task-description">
+                {{ task.description }}
+              </div>
+            </form>
+          </ng-container>
+          <ng-template #editMode>
+            <form [formGroup]="editTaskForm">
+              <input formControlName="editTask" />
+              <textarea formControlName="editDescription"></textarea>
+              <div class="button-group">
+                <app-button
+                  [title]="'Save'"
+                  [buttonClasses]="{ 'button--save': true }"
+                  (click)="saveTask(task.id)"
+                  tooltipText="Save changes"
+                ></app-button>
+              </div>
+            </form>
+          </ng-template>
           <app-button
             [title]="'Delete'"
             [buttonClasses]="{ 'button--delete': true }"
-            (click)="deleteTask(task.id)"
+            (click)="deleteTask(task.id, $event)"
             tooltipText="Delete this task"
           ></app-button>
         </div>
       </li>
     </ul>
     <div class="input-container">
-      <div class="input-block">
-        <form [formGroup]="addTaskForm" (ngSubmit)="addTask()">
-          <mat-form-field class="task-input-field">
-            <input
-              matInput
-              class="task-input"
-              formControlName="newTask"
-              placeholder="New task"
-            />
-          </mat-form-field>
-          <mat-form-field class="task-input-field">
-            <textarea
-              matInput
-              class="task-input"
-              formControlName="newDescription"
-              placeholder="Task description"
-            ></textarea>
-          </mat-form-field>
-          <app-button
-            [title]="addButtonTitle"
-            [disabled]="addTaskForm.invalid"
-            [buttonClasses]="{ 'button--add': true }"
-            tooltipText="Add this task"
-          ></app-button>
-        </form>
-      </div>
+      <form [formGroup]="addTaskForm" (ngSubmit)="addTask()" class="input-block">
+        <mat-form-field class="task-input-field">
+          <input
+            matInput
+            class="task-input"
+            formControlName="newTask"
+            placeholder="New task"
+          />
+        </mat-form-field>
+        <mat-form-field class="task-input-field">
+<textarea
+  matInput
+  class="task-input"
+  formControlName="newDescription"
+  placeholder="Task description"
+></textarea>
+        </mat-form-field>
+        <app-button
+          [title]="addButtonTitle"
+          [disabled]="addTaskForm.invalid"
+          [buttonClasses]="{ 'button--add': true }"
+          tooltipText="Add this task"
+        ></app-button>
+      </form>
     </div>
   </div>
 </div>
