@@ -19,4 +19,17 @@ export class ToastsComponent implements OnInit {
       this.toasts = toasts;
     });
   }
+
+  removeToast(index: number): void {
+    this.toastService.removeToast(index);
+  }
+
+  getToastClass(toast: string): string {
+    if (toast.includes('successfully')) {
+      return 'toast-success';
+    } else if (toast.includes('Failed')) {
+      return 'toast-error';
+    }
+    return '';
+  }
 }

@@ -14,33 +14,47 @@
       >
         <div class="task-item">
           <ng-container *ngIf="task.id !== editingTaskId; else editMode">
-            <form [formGroup]="viewTaskForm">
-              <span>{{ task.text }}</span>
+            <form [formGroup]="viewTaskForm" class="view-task-form" (click)="toggleDescription(task.id, $event)">
+              <span class="task-text">{{ task.text }}</span>
               <div *ngIf="task.id === selectedItemId" class="task-description">
                 {{ task.description }}
+              </div>
+              <div class="button-container">
+                <app-button
+                  [title]="'Delete'"
+                  [buttonClasses]="{ 'button--delete': true }"
+                  (click)="deleteTask(task.id, $event)"
+                  tooltipText="Delete this task"
+                ></app-button>
               </div>
             </form>
           </ng-container>
           <ng-template #editMode>
-            <form [formGroup]="editTaskForm">
-              <input formControlName="editTask" />
-              <textarea formControlName="editDescription"></textarea>
-              <div class="button-group">
-                <app-button
-                  [title]="'Save'"
-                  [buttonClasses]="{ 'button--save': true }"
-                  (click)="saveTask(task.id)"
-                  tooltipText="Save changes"
-                ></app-button>
+            <form [formGroup]="editTaskForm" class="edit-task-form">
+              <div class="edit-fields">
+                <mat-form-field class="edit-task-field">
+                  <input matInput formControlName="editTask" placeholder="Edit task" />
+                </mat-form-field>
+                <mat-form-field class="edit-task-field">
+                  <textarea matInput formControlName="editDescription" placeholder="Edit description"></textarea>
+                </mat-form-field>
+                <div class="button-group edit-mode-buttons">
+                  <app-button
+                    [title]="'Save'"
+                    [buttonClasses]="{ 'button--save': true }"
+                    (click)="saveTask(task.id)"
+                    tooltipText="Save changes"
+                  ></app-button>
+                  <app-button
+                    [title]="'Delete'"
+                    [buttonClasses]="{ 'button--delete': true }"
+                    (click)="deleteTask(task.id, $event)"
+                    tooltipText="Delete this task"
+                  ></app-button>
+                </div>
               </div>
             </form>
           </ng-template>
-          <app-button
-            [title]="'Delete'"
-            [buttonClasses]="{ 'button--delete': true }"
-            (click)="deleteTask(task.id, $event)"
-            tooltipText="Delete this task"
-          ></app-button>
         </div>
       </li>
     </ul>

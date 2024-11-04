@@ -66,6 +66,10 @@
   margin-right: 10px;
 }
 
+.task-text {
+  flex: 1;
+}
+
 .task-description {
   width: 100%;
   padding: 10px;
@@ -118,6 +122,10 @@
   height: 100%;
 }
 
+.mat-input-element {
+  height: 100%;
+}
+
 .task-input {
   width: 100%;
   padding: 10px;
@@ -144,6 +152,7 @@
 
 .button-group {
   display: flex;
+  justify-content: flex-end;
   gap: 10px;
   margin-top: 10px;
 }
@@ -162,6 +171,49 @@
   cursor: pointer;
 }
 
+.button--delete {
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
 .button--save:hover {
   background-color: darkgreen;
+}
+
+.edit-task-form {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+}
+
+.edit-task-field {
+  flex: 1;
+  min-height: 56px;
+}
+
+.edit-fields {
+  display: flex;
+  gap: 5px;
+  width: 100%;
+  align-items: center;
+}
+
+.edit-mode-buttons {
+  gap: 20px;
+}
+
+.view-task-form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.button-container {
+  margin-left: auto;
 }

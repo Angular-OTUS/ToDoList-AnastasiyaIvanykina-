@@ -104,11 +104,10 @@ export class ToDoListComponent implements OnInit, OnDestroy {
           });
           this.addTaskForm.reset();
           this.toastService.showToast('Task added successfully!');
-          this.editingTaskId = null; // Сбросить editingTaskId
+          this.editingTaskId = null;
         },
         error: (err) => {
-          console.error('Error adding task:', err);
-          this.toastService.showToast('Failed to add task.');
+          this.toastService.showToast('Failed to add task!');
         },
       });
     }
@@ -122,6 +121,7 @@ export class ToDoListComponent implements OnInit, OnDestroy {
 
   handleClick(taskId: number, event: Event): void {
     event.stopPropagation();
+    console.log('Single click on task:', taskId);
     if (this.editingTaskId !== null && this.editingTaskId !== taskId) {
       this.showConfirmationModal(taskId);
     } else {
@@ -131,6 +131,11 @@ export class ToDoListComponent implements OnInit, OnDestroy {
   }
 
   editTask(taskId: number): void {
+    console.log('Double click on task:', taskId);
+    if (this.selectedItemId !== taskId) {
+      this.selectedItemId = taskId;
+      this.cdr.detectChanges();
+    }
     this.editingTaskId = taskId;
     this.tasks
       .pipe(
@@ -144,6 +149,7 @@ export class ToDoListComponent implements OnInit, OnDestroy {
             editTask: task.text,
             editDescription: task.description,
           });
+          this.cdr.detectChanges();
         } else {
           this.toastService.showToast('Task not found!');
         }
@@ -168,6 +174,7 @@ export class ToDoListComponent implements OnInit, OnDestroy {
       this.editingTaskId = null;
       this.selectedItemId = newTaskId;
       this.cdr.detectChanges();
+    } else {
     }
   }
 

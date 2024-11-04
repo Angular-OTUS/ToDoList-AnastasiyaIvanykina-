@@ -11,20 +11,21 @@ export class ClickDirective {
   private clickCount = 0;
   private timeout: any;
 
+  @HostListener('mousedown', ['$event'])
+  handleMouseDown(event: Event): void {}
+
+  @HostListener('mouseup', ['$event'])
+  handleMouseUp(event: Event): void {}
+
+  @HostListener('dblclick', ['$event'])
+  handleDoubleClickEvent(event: Event): void {
+    event.stopPropagation();
+    this.doubleClick.emit(event);
+  }
+
   @HostListener('click', ['$event'])
   handleClickEvent(event: Event): void {
-    this.clickCount++;
-    if (this.clickCount === 1) {
-      this.timeout = setTimeout(() => {
-        if (this.clickCount === 1) {
-          this.singleClick.emit(event);
-        }
-        this.clickCount = 0;
-      }, 250);
-    } else if (this.clickCount === 2) {
-      clearTimeout(this.timeout);
-      this.doubleClick.emit(event);
-      this.clickCount = 0;
-    }
+    event.stopPropagation();
+    this.singleClick.emit(event);
   }
 }
