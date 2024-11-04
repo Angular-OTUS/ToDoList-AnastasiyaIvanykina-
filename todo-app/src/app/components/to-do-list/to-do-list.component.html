@@ -14,7 +14,11 @@
       >
         <div class="task-item">
           <ng-container *ngIf="task.id !== editingTaskId; else editMode">
-            <form [formGroup]="viewTaskForm" class="view-task-form" (click)="toggleDescription(task.id, $event)">
+            <form
+              [formGroup]="viewTaskForm"
+              class="view-task-form"
+              (click)="toggleDescription(task.id, $event)"
+            >
               <span class="task-text">{{ task.text }}</span>
               <div *ngIf="task.id === selectedItemId" class="task-description">
                 {{ task.description }}
@@ -33,10 +37,18 @@
             <form [formGroup]="editTaskForm" class="edit-task-form">
               <div class="edit-fields">
                 <mat-form-field class="edit-task-field">
-                  <input matInput formControlName="editTask" placeholder="Edit task" />
+                  <input
+                    matInput
+                    formControlName="editTask"
+                    placeholder="Edit task"
+                  />
                 </mat-form-field>
                 <mat-form-field class="edit-task-field">
-                  <textarea matInput formControlName="editDescription" placeholder="Edit description"></textarea>
+                  <textarea
+                    matInput
+                    formControlName="editDescription"
+                    placeholder="Edit description"
+                  ></textarea>
                 </mat-form-field>
                 <div class="button-group edit-mode-buttons">
                   <app-button
@@ -59,7 +71,11 @@
       </li>
     </ul>
     <div class="input-container">
-      <form [formGroup]="addTaskForm" (ngSubmit)="addTask()" class="input-block">
+      <form
+        [formGroup]="addTaskForm"
+        (ngSubmit)="addTask()"
+        class="input-block"
+      >
         <mat-form-field class="task-input-field">
           <input
             matInput
@@ -69,12 +85,12 @@
           />
         </mat-form-field>
         <mat-form-field class="task-input-field">
-<textarea
-  matInput
-  class="task-input"
-  formControlName="newDescription"
-  placeholder="Task description"
-></textarea>
+          <textarea
+            matInput
+            class="task-input"
+            formControlName="newDescription"
+            placeholder="Task description"
+          ></textarea>
         </mat-form-field>
         <app-button
           [title]="addButtonTitle"

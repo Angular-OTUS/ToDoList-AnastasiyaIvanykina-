@@ -121,7 +121,6 @@ export class ToDoListComponent implements OnInit, OnDestroy {
 
   handleClick(taskId: number, event: Event): void {
     event.stopPropagation();
-    console.log('Single click on task:', taskId);
     if (this.editingTaskId !== null && this.editingTaskId !== taskId) {
       this.showConfirmationModal(taskId);
     } else {
@@ -131,7 +130,6 @@ export class ToDoListComponent implements OnInit, OnDestroy {
   }
 
   editTask(taskId: number): void {
-    console.log('Double click on task:', taskId);
     if (this.selectedItemId !== taskId) {
       this.selectedItemId = taskId;
       this.cdr.detectChanges();
