@@ -25,6 +25,7 @@ import { ClickDirective } from '../../shared/click.directive';
 import { TooltipDirective } from '../../shared/tooltip.directive';
 import { LoadingSpinnerComponent } from '../../shared/loading-spinner/loading-spinner.component';
 import { TaskControlPanelComponent } from '../task-control-panel/task-control-panel.component';
+import { TodoCreateItemComponent } from '../todo-create-item/todo-create-item.component';
 
 @Component({
   selector: 'app-to-do-list',
@@ -41,6 +42,7 @@ import { TaskControlPanelComponent } from '../task-control-panel/task-control-pa
     TooltipDirective,
     LoadingSpinnerComponent,
     TaskControlPanelComponent,
+    TodoCreateItemComponent,
   ],
   templateUrl: './to-do-list.component.html',
   styleUrls: ['./to-do-list.component.css'],
@@ -112,26 +114,23 @@ export class ToDoListComponent implements OnInit, OnDestroy {
     });
   }
 
-  public addTask(): void {
-    if (this.addTaskForm.valid) {
-      this.tasks$.pipe(first(), takeUntil(this.destroy$)).subscribe({
-        next: (tasks) => {
-          const maxId = Math.max(...tasks.map((task: Task) => task.id));
-          this.todoService.addTask({
-            id: maxId + 1,
-            text: this.addTaskForm.value.newTask.trim(),
-            description: this.addTaskForm.value.newDescription.trim(),
-            status: undefined,
-          });
-          this.addTaskForm.reset();
-          this.toastService.showSuccess('Task added to backlog!');
-          this.editingTaskId = null;
-        },
-        error: (err) => {
-          this.toastService.showError('Failed to add task!');
-        },
-      });
-    }
+  public addTask(task: { text: string; description: string }): void {
+    this.tasks$.pipe(first(), takeUntil(this.destroy$)).subscribe({
+      next: (tasks) => {
+        const maxId = Math.max(...tasks.map((task: Task) => task.id));
+        this.todoService.addTask({
+          id: maxId + 1,
+          text: task.text.trim(),
+          description: task.description.trim(),
+          status: undefined,
+        });
+        this.toastService.showSuccess('Task added to backlog!');
+        this.editingTaskId = null;
+      },
+      error: (err) => {
+        this.toastService.showError('Failed to add task!');
+      },
+    });
   }
 
   public deleteTask(taskId: number, event: Event): void {
