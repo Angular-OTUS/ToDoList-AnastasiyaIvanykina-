@@ -10,7 +10,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ButtonComponent } from '../button/button.component';
 import { TodoService, Task } from '../../services/todo.service';
-import { first } from 'rxjs/operators';
 
 @Component({
   selector: 'app-todo-create-item',
@@ -45,10 +44,13 @@ export class TodoCreateItemComponent {
 
   public onSubmit(): void {
     if (this.addTaskForm.valid) {
-      const newTask = {
+      const newTask: Task = {
+        id: Date.now(),
         text: this.addTaskForm.value.newTask.trim(),
         description: this.addTaskForm.value.newDescription.trim(),
+        status: undefined,
       };
+      this.todoService.addTask(newTask);
       this.taskCreated.emit(newTask);
       this.addTaskForm.reset();
     }

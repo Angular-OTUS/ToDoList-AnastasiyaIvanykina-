@@ -26,6 +26,7 @@ import { TooltipDirective } from '../../shared/tooltip.directive';
 import { LoadingSpinnerComponent } from '../../shared/loading-spinner/loading-spinner.component';
 import { TaskControlPanelComponent } from '../task-control-panel/task-control-panel.component';
 import { TodoCreateItemComponent } from '../todo-create-item/todo-create-item.component';
+import { ErrorHandlerService } from '../../services/error-handler.service';
 
 @Component({
   selector: 'app-to-do-list',
@@ -50,7 +51,6 @@ import { TodoCreateItemComponent } from '../todo-create-item/todo-create-item.co
 })
 export class ToDoListComponent implements OnInit, OnDestroy {
   public title: string = 'ToDo-list';
-  public addButtonTitle: string = 'Add task';
   public saveButtonTitle: string = 'Save';
   public deleteButtonTitle: string = 'Delete';
   public tasks$!: Observable<Task[]>;
@@ -70,6 +70,7 @@ export class ToDoListComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private todoService: TodoService,
     private toastService: ToastService,
+    private errorHandler: ErrorHandlerService,
   ) {
     this.addTaskForm = this.fb.group({
       newTask: ['', Validators.required],
@@ -108,7 +109,7 @@ export class ToDoListComponent implements OnInit, OnDestroy {
         this.isLoading = false;
       },
       error: (err) => {
-        console.error('Error loading tasks:', err);
+        this.errorHandler.handleError(err);
         this.isLoading = false;
       },
     });
@@ -128,7 +129,7 @@ export class ToDoListComponent implements OnInit, OnDestroy {
         this.editingTaskId = null;
       },
       error: (err) => {
-        this.toastService.showError('Failed to add task!');
+        this.errorHandler.handleError(err);
       },
     });
   }
