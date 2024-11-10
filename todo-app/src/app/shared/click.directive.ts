@@ -8,8 +8,8 @@ export class ClickDirective {
   @Output() singleClick = new EventEmitter<Event>();
   @Output() doubleClick = new EventEmitter<Event>();
 
-  private clickCount = 0;
-  private timeout: any;
+  private clickCount: number = 0;
+  private timeout: ReturnType<typeof setTimeout> | null = null;
 
   @HostListener('mousedown', ['$event'])
   handleMouseDown(event: Event): void {}

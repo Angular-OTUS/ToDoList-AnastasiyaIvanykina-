@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ToastService } from '../../services/toast.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-toasts',
@@ -9,22 +10,35 @@ import { ToastService } from '../../services/toast.service';
   templateUrl: './toasts.component.html',
   styleUrls: ['./toasts.component.css'],
 })
-export class ToastsComponent implements OnInit {
-  toasts: string[] = [];
+export class ToastsComponent implements OnInit, OnDestroy {
+  public toasts: string[] = [];
+  private toastSubscription!: Subscription;
 
   constructor(private toastService: ToastService) {}
 
   ngOnInit(): void {
-    this.toastService.getToasts().subscribe((toasts) => {
-      this.toasts = toasts;
-    });
+    this.subscribeToToasts();
   }
 
-  removeToast(index: number): void {
+  ngOnDestroy(): void {
+    if (this.toastSubscription) {
+      this.toastSubscription.unsubscribe();
+    }
+  }
+
+  private subscribeToToasts(): void {
+    this.toastSubscription = this.toastService
+      .getToasts()
+      .subscribe((toasts) => {
+        this.toasts = toasts;
+      });
+  }
+
+  public removeToast(index: number): void {
     this.toastService.removeToast(index);
   }
 
-  getToastClass(toast: string): string {
+  public getToastClass(toast: string): string {
     if (toast.includes('successfully')) {
       return 'toast-success';
     } else if (toast.includes('Failed')) {

@@ -11,7 +11,7 @@ import { ClickDirective } from '../../shared/click.directive';
   imports: [CommonModule, TooltipDirective, ClickDirective],
 })
 export class ButtonComponent {
-  @Input() title!: string;
+  @Input() title?: string;
   @Input() disabled: boolean = false;
   @Input() buttonClasses: { [key: string]: boolean } = {};
   @Input() tooltipText: string = 'Click me!';

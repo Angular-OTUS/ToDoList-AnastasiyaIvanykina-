@@ -43,15 +43,15 @@ import { TooltipDirective } from '../../shared/tooltip.directive';
   encapsulation: ViewEncapsulation.None,
 })
 export class ToDoListComponent implements OnInit, OnDestroy {
-  title: string = 'ToDo-list';
-  addButtonTitle: string = 'Add task';
-  tasks!: Observable<Task[]>;
-  addTaskForm: FormGroup;
-  editTaskForm: FormGroup;
-  viewTaskForm: FormGroup;
-  selectedItemId: number | null = null;
-  editingTaskId: number | null = null;
-  isLoading: boolean = true;
+  public title: string = 'ToDo-list';
+  public addButtonTitle: string = 'Add task';
+  public tasks!: Observable<Task[]>;
+  public addTaskForm: FormGroup;
+  public editTaskForm: FormGroup;
+  public viewTaskForm: FormGroup;
+  public selectedItemId: number | null = null;
+  public editingTaskId: number | null = null;
+  public isLoading: boolean = true;
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -92,7 +92,7 @@ export class ToDoListComponent implements OnInit, OnDestroy {
     });
   }
 
-  addTask(): void {
+  public addTask(): void {
     if (this.addTaskForm.valid) {
       this.tasks.pipe(first(), takeUntil(this.destroy$)).subscribe({
         next: (tasks) => {
@@ -113,13 +113,13 @@ export class ToDoListComponent implements OnInit, OnDestroy {
     }
   }
 
-  deleteTask(taskId: number, event: Event): void {
+  public deleteTask(taskId: number, event: Event): void {
     event.stopPropagation();
     this.todoService.deleteTask(taskId);
     this.toastService.showToast('Task deleted successfully!');
   }
 
-  handleClick(taskId: number, event: Event): void {
+  public handleClick(taskId: number, event: Event): void {
     event.stopPropagation();
     if (this.editingTaskId !== null && this.editingTaskId !== taskId) {
       this.showConfirmationModal(taskId);
@@ -129,7 +129,7 @@ export class ToDoListComponent implements OnInit, OnDestroy {
     }
   }
 
-  editTask(taskId: number): void {
+  public editTask(taskId: number): void {
     if (this.selectedItemId !== taskId) {
       this.selectedItemId = taskId;
       this.cdr.detectChanges();
@@ -154,7 +154,7 @@ export class ToDoListComponent implements OnInit, OnDestroy {
       });
   }
 
-  saveTask(taskId: number): void {
+  public saveTask(taskId: number): void {
     const updatedTask: Task = {
       id: taskId,
       text: this.editTaskForm.get('editTask')?.value,
@@ -166,22 +166,21 @@ export class ToDoListComponent implements OnInit, OnDestroy {
     this.toastService.showToast('Task updated successfully!');
   }
 
-  showConfirmationModal(newTaskId: number): void {
+  private showConfirmationModal(newTaskId: number): void {
     const confirmation = confirm('Do you really want to undo the changes?');
     if (confirmation) {
       this.editingTaskId = null;
       this.selectedItemId = newTaskId;
       this.cdr.detectChanges();
-    } else {
     }
   }
 
-  toggleDescription(taskId: number, event: Event): void {
+  public toggleDescription(taskId: number, event: Event): void {
     event.stopPropagation();
     this.selectedItemId = this.selectedItemId === taskId ? null : taskId;
   }
 
-  trackByTaskId(index: number, task: Task): number {
+  public trackByTaskId(index: number, task: Task): number {
     return task.id;
   }
 

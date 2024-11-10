@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +12,7 @@ export class ToastService {
   ]);
   private toasts: string[] = this.toastsSubject.value;
 
-  getToasts() {
+  getToasts(): Observable<string[]> {
     return this.toastsSubject.asObservable();
   }
 
