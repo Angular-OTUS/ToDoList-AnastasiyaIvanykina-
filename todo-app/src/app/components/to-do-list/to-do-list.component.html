@@ -1,40 +1,86 @@
+<div *ngIf="isLoading" class="spinner">
+  <mat-spinner></mat-spinner>
+</div>
 <div *ngIf="!isLoading" class="outer-container">
   <div class="task-container">
     <h1 class="title">{{ title }}</h1>
     <ul class="task-list">
       <li
-        *ngFor="let task of tasks"
+        *ngFor="let task of tasks | async; trackBy: trackByTaskId"
         [ngClass]="{ selected: task.id === selectedItemId }"
-        (click)="selectTask(task.id, $event)"
+        appClick
+        (singleClick)="handleClick(task.id, $event)"
+        (doubleClick)="editTask(task.id)"
       >
-        <div
-          class="task-item"
-          [ngClass]="{ selected: task.id === selectedItemId }"
-        >
-          <span (click)="toggleDescription(task.id, $event)">
-            {{ task.text }}
-          </span>
-          <textarea
-            *ngIf="task.id === selectedItemId"
-            class="task-description"
-            [(ngModel)]="task.description"
-          ></textarea>
-          <app-button
-            [title]="'Delete'"
-            [buttonClasses]="{ 'button--delete': true }"
-            (click)="deleteTask(task.id)"
-            tooltipText="Delete this task"
-          ></app-button>
+        <div class="task-item">
+          <ng-container *ngIf="task.id !== editingTaskId; else editMode">
+            <form
+              [formGroup]="viewTaskForm"
+              class="view-task-form"
+              (click)="toggleDescription(task.id, $event)"
+            >
+              <span class="task-text">{{ task.text }}</span>
+              <div *ngIf="task.id === selectedItemId" class="task-description">
+                {{ task.description }}
+              </div>
+              <div class="button-container">
+                <app-button
+                  [title]="'Delete'"
+                  [buttonClasses]="{ 'button--delete': true }"
+                  (click)="deleteTask(task.id, $event)"
+                  tooltipText="Delete this task"
+                ></app-button>
+              </div>
+            </form>
+          </ng-container>
+          <ng-template #editMode>
+            <form [formGroup]="editTaskForm" class="edit-task-form">
+              <div class="edit-fields">
+                <mat-form-field class="edit-task-field">
+                  <input
+                    matInput
+                    formControlName="editTask"
+                    placeholder="Edit task"
+                  />
+                </mat-form-field>
+                <mat-form-field class="edit-task-field">
+                  <textarea
+                    matInput
+                    formControlName="editDescription"
+                    placeholder="Edit description"
+                  ></textarea>
+                </mat-form-field>
+                <div class="button-group edit-mode-buttons">
+                  <app-button
+                    [title]="'Save'"
+                    [buttonClasses]="{ 'button--save': true }"
+                    (click)="saveTask(task.id)"
+                    tooltipText="Save changes"
+                  ></app-button>
+                  <app-button
+                    [title]="'Delete'"
+                    [buttonClasses]="{ 'button--delete': true }"
+                    (click)="deleteTask(task.id, $event)"
+                    tooltipText="Delete this task"
+                  ></app-button>
+                </div>
+              </div>
+            </form>
+          </ng-template>
         </div>
       </li>
     </ul>
     <div class="input-container">
-      <div class="input-block">
+      <form
+        [formGroup]="addTaskForm"
+        (ngSubmit)="addTask()"
+        class="input-block"
+      >
         <mat-form-field class="task-input-field">
           <input
             matInput
             class="task-input"
-            [(ngModel)]="newTask"
+            formControlName="newTask"
             placeholder="New task"
           />
         </mat-form-field>
@@ -42,18 +88,17 @@
           <textarea
             matInput
             class="task-input"
-            [(ngModel)]="newDescription"
+            formControlName="newDescription"
             placeholder="Task description"
           ></textarea>
         </mat-form-field>
         <app-button
           [title]="addButtonTitle"
-          [disabled]="!newTask.trim() || !newDescription.trim()"
+          [disabled]="addTaskForm.invalid"
           [buttonClasses]="{ 'button--add': true }"
-          (click)="addTask()"
           tooltipText="Add this task"
         ></app-button>
-      </div>
+      </form>
     </div>
   </div>
 </div>

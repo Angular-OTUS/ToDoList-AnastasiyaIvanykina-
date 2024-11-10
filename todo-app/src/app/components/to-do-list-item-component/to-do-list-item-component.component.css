@@ -4,7 +4,7 @@
   justify-content: space-between;
   width: 100%;
   padding: 10px;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid #cccccc;
   background-color: #f9f9f9;
   margin-bottom: 5px;
   border-radius: 4px;
@@ -18,7 +18,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 10px;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid #cccccc;
   background-color: #f9f9f9;
   margin-bottom: 5px;
   border-radius: 4px;
@@ -32,8 +32,8 @@
 
 .tooltip {
   position: absolute;
-  background: #333;
-  color: #fff;
+  background: #333333;
+  color: #ffffff;
   padding: 5px 10px;
   border-radius: 4px;
   top: -30px;
