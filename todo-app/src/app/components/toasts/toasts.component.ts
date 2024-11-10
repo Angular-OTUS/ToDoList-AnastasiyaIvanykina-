@@ -39,9 +39,9 @@ export class ToastsComponent implements OnInit, OnDestroy {
   }
 
   public getToastClass(toast: string): string {
-    if (toast.includes('successfully')) {
+    if (toast.includes('Success')) {
       return 'toast-success';
-    } else if (toast.includes('Failed')) {
+    } else if (toast.includes('Error')) {
       return 'toast-error';
     }
     return '';

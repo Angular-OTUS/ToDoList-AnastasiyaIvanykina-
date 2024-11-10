@@ -5,6 +5,7 @@ export interface Task {
   id: number;
   text: string;
   description: string;
+  status?: boolean | null; // undefined for backlog, null for InProgress, true for Completed for future Kanban board
 }
 
 @Injectable({
@@ -12,11 +13,17 @@ export interface Task {
 })
 export class TodoService {
   private tasksSubject = new BehaviorSubject<Task[]>([
-    { id: 1, text: 'Buy a Porsche', description: 'Purchase a new Porsche car' },
+    {
+      id: 1,
+      text: 'Buy a Porsche',
+      description: 'Purchase a new Porsche car',
+      status: undefined,
+    },
     {
       id: 2,
       text: 'Take a walk with the dog',
       description: 'Walk the dog in the park',
+      status: null,
     },
   ]);
   tasks$ = this.tasksSubject.asObservable();

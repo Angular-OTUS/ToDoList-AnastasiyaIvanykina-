@@ -23,6 +23,7 @@ import { Observable, Subject } from 'rxjs';
 import { map, first, takeUntil, delay } from 'rxjs/operators';
 import { ClickDirective } from '../../shared/click.directive';
 import { TooltipDirective } from '../../shared/tooltip.directive';
+import { LoadingSpinnerComponent } from '../../shared/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-to-do-list',
@@ -37,6 +38,7 @@ import { TooltipDirective } from '../../shared/tooltip.directive';
     ButtonComponent,
     ClickDirective,
     TooltipDirective,
+    LoadingSpinnerComponent,
   ],
   templateUrl: './to-do-list.component.html',
   styleUrls: ['./to-do-list.component.css'],
@@ -70,11 +72,13 @@ export class ToDoListComponent implements OnInit, OnDestroy {
     this.editTaskForm = this.fb.group({
       editTask: ['', Validators.required],
       editDescription: ['', Validators.required],
+      editStatus: [false],
     });
 
     this.viewTaskForm = this.fb.group({
       viewTask: ['', Validators.required],
       viewDescription: ['', Validators.required],
+      viewStatus: [false],
     });
   }
 
@@ -103,13 +107,14 @@ export class ToDoListComponent implements OnInit, OnDestroy {
             id: maxId + 1,
             text: this.addTaskForm.value.newTask.trim(),
             description: this.addTaskForm.value.newDescription.trim(),
+            status: undefined,
           });
           this.addTaskForm.reset();
-          this.toastService.showToast('Task added successfully!');
+          this.toastService.showSuccess('Task added to backlog!');
           this.editingTaskId = null;
         },
         error: (err) => {
-          this.toastService.showToast('Failed to add task!');
+          this.toastService.showError('Failed to add task!');
         },
       });
     }
@@ -118,7 +123,7 @@ export class ToDoListComponent implements OnInit, OnDestroy {
   public deleteTask(taskId: number, event: Event): void {
     event.stopPropagation();
     this.todoService.deleteTask(taskId);
-    this.toastService.showToast('Task deleted successfully!');
+    this.toastService.showSuccess('Task deleted successfully!');
   }
 
   public handleClick(taskId: number, event: Event): void {
@@ -148,6 +153,7 @@ export class ToDoListComponent implements OnInit, OnDestroy {
           this.editTaskForm.patchValue({
             editTask: task.text,
             editDescription: task.description,
+            editStatus: task.status === true,
           });
           this.cdr.detectChanges();
         } else {
@@ -161,11 +167,24 @@ export class ToDoListComponent implements OnInit, OnDestroy {
       id: taskId,
       text: this.editTaskForm.get('editTask')?.value,
       description: this.editTaskForm.get('editDescription')?.value,
+      status: this.editTaskForm.get('editStatus')?.value,
     };
     this.todoService.updateTask(updatedTask);
     this.editingTaskId = null;
     this.editTaskForm.reset();
-    this.toastService.showToast('Task updated successfully!');
+    this.toastService.showSuccess('Task updated successfully!');
+  }
+
+  public toggleStatus(task: Task): void {
+    const updatedTask: Task = {
+      ...task,
+      status: !task.status,
+    };
+    this.todoService.updateTask(updatedTask);
+    const message = updatedTask.status
+      ? 'Task marked as completed!'
+      : 'Task marked as incomplete!';
+    this.toastService.showSuccess(message);
   }
 
   private showConfirmationModal(newTaskId: number): void {

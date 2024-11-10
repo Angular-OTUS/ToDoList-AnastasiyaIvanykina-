@@ -1,6 +1,4 @@
-<div *ngIf="isLoading" class="spinner">
-  <mat-spinner></mat-spinner>
-</div>
+<app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
 <div *ngIf="!isLoading" class="outer-container">
   <div class="task-container">
     <h1 class="title">{{ title }}</h1>
@@ -19,6 +17,13 @@
               class="view-task-form"
               (click)="toggleDescription(task.id, $event)"
             >
+              <input
+                type="checkbox"
+                class="custom-checkbox"
+                formControlName="viewStatus"
+                [checked]="task.status === true"
+                (change)="toggleStatus(task)"
+              />
               <span class="task-text">{{ task.text }}</span>
               <div *ngIf="task.id === selectedItemId" class="task-description">
                 {{ task.description }}
@@ -37,6 +42,12 @@
           <ng-template #editMode>
             <form [formGroup]="editTaskForm" class="edit-task-form">
               <div class="edit-fields">
+                <input
+                  type="checkbox"
+                  class="custom-checkbox"
+                  formControlName="editStatus"
+                  [checked]="task.status === true"
+                />
                 <mat-form-field class="edit-task-field">
                   <input
                     matInput
