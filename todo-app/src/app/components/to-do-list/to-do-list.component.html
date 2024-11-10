@@ -25,11 +25,12 @@
               </div>
               <div class="button-container">
                 <app-button
-                  [title]="'Delete'"
                   [buttonClasses]="{ 'button--delete': true }"
                   (click)="deleteTask(task.id, $event)"
                   tooltipText="Delete this task"
-                ></app-button>
+                >
+                  {{ deleteButtonTitle }}
+                </app-button>
               </div>
             </form>
           </ng-container>
@@ -52,17 +53,19 @@
                 </mat-form-field>
                 <div class="button-group edit-mode-buttons">
                   <app-button
-                    [title]="'Save'"
                     [buttonClasses]="{ 'button--save': true }"
                     (click)="saveTask(task.id)"
                     tooltipText="Save changes"
-                  ></app-button>
+                  >
+                    {{ saveButtonTitle }}
+                  </app-button>
                   <app-button
-                    [title]="'Delete'"
                     [buttonClasses]="{ 'button--delete': true }"
                     (click)="deleteTask(task.id, $event)"
                     tooltipText="Delete this task"
-                  ></app-button>
+                  >
+                    {{ deleteButtonTitle }}
+                  </app-button>
                 </div>
               </div>
             </form>
@@ -93,11 +96,12 @@
           ></textarea>
         </mat-form-field>
         <app-button
-          [title]="addButtonTitle"
           [disabled]="addTaskForm.invalid"
           [buttonClasses]="{ 'button--add': true }"
           tooltipText="Add this task"
-        ></app-button>
+        >
+          {{ addButtonTitle }}
+        </app-button>
       </form>
     </div>
   </div>

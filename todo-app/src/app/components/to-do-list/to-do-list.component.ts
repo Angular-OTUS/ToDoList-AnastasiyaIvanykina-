@@ -45,6 +45,8 @@ import { TooltipDirective } from '../../shared/tooltip.directive';
 export class ToDoListComponent implements OnInit, OnDestroy {
   public title: string = 'ToDo-list';
   public addButtonTitle: string = 'Add task';
+  public saveButtonTitle: string = 'Save';
+  public deleteButtonTitle: string = 'Delete';
   public tasks!: Observable<Task[]>;
   public addTaskForm: FormGroup;
   public editTaskForm: FormGroup;
