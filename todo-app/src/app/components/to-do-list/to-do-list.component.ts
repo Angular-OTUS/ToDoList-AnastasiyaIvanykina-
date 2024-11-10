@@ -19,11 +19,12 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ButtonComponent } from '../button/button.component';
 import { TodoService, Task } from '../../services/todo.service';
 import { ToastService } from '../../services/toast.service';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, BehaviorSubject, combineLatest } from 'rxjs';
 import { map, first, takeUntil, delay } from 'rxjs/operators';
 import { ClickDirective } from '../../shared/click.directive';
 import { TooltipDirective } from '../../shared/tooltip.directive';
 import { LoadingSpinnerComponent } from '../../shared/loading-spinner/loading-spinner.component';
+import { TaskControlPanelComponent } from '../task-control-panel/task-control-panel.component';
 
 @Component({
   selector: 'app-to-do-list',
@@ -39,6 +40,7 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner/loading-sp
     ClickDirective,
     TooltipDirective,
     LoadingSpinnerComponent,
+    TaskControlPanelComponent,
   ],
   templateUrl: './to-do-list.component.html',
   styleUrls: ['./to-do-list.component.css'],
@@ -49,13 +51,16 @@ export class ToDoListComponent implements OnInit, OnDestroy {
   public addButtonTitle: string = 'Add task';
   public saveButtonTitle: string = 'Save';
   public deleteButtonTitle: string = 'Delete';
-  public tasks!: Observable<Task[]>;
+  public tasks$!: Observable<Task[]>;
+  public filteredTasks$!: Observable<Task[]>;
+  public statuses$!: Observable<(boolean | null | undefined)[]>;
   public addTaskForm: FormGroup;
   public editTaskForm: FormGroup;
   public viewTaskForm: FormGroup;
   public selectedItemId: number | null = null;
   public editingTaskId: number | null = null;
   public isLoading: boolean = true;
+  private filterSubject = new BehaviorSubject<string | null>(null);
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -84,10 +89,19 @@ export class ToDoListComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.isLoading = true;
-    this.tasks = this.todoService
+    this.tasks$ = this.todoService
       .getTasks()
       .pipe(delay(500), takeUntil(this.destroy$));
-    this.tasks.pipe(takeUntil(this.destroy$)).subscribe({
+    this.statuses$ = this.todoService.getStatuses();
+    this.filteredTasks$ = combineLatest([this.tasks$, this.filterSubject]).pipe(
+      map(([tasks, filter]) => {
+        if (!filter) {
+          return tasks;
+        }
+        return tasks.filter((task) => task.status === (filter === 'completed'));
+      }),
+    );
+    this.tasks$.pipe(takeUntil(this.destroy$)).subscribe({
       next: () => {
         this.isLoading = false;
       },
@@ -100,7 +114,7 @@ export class ToDoListComponent implements OnInit, OnDestroy {
 
   public addTask(): void {
     if (this.addTaskForm.valid) {
-      this.tasks.pipe(first(), takeUntil(this.destroy$)).subscribe({
+      this.tasks$.pipe(first(), takeUntil(this.destroy$)).subscribe({
         next: (tasks) => {
           const maxId = Math.max(...tasks.map((task: Task) => task.id));
           this.todoService.addTask({
@@ -142,7 +156,7 @@ export class ToDoListComponent implements OnInit, OnDestroy {
       this.cdr.detectChanges();
     }
     this.editingTaskId = taskId;
-    this.tasks
+    this.tasks$
       .pipe(
         first(),
         map((tasks) => tasks.find((task: Task) => task.id === taskId)),
@@ -203,6 +217,26 @@ export class ToDoListComponent implements OnInit, OnDestroy {
 
   public trackByTaskId(index: number, task: Task): number {
     return task.id;
+  }
+
+  public applyFilter(filter: string | null): void {
+    this.filterSubject.next(filter);
+    this.filteredTasks$ = combineLatest([this.tasks$, this.filterSubject]).pipe(
+      map(([tasks, filter]) => {
+        if (!filter) {
+          return tasks;
+        }
+        if (filter === 'completed') {
+          return tasks.filter((task) => task.status === true);
+        } else if (filter === 'in progress') {
+          return tasks.filter(
+            (task) => task.status === false || task.status === null,
+          );
+        } else {
+          return tasks;
+        }
+      }),
+    );
   }
 
   ngOnDestroy(): void {

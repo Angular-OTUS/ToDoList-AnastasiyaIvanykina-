@@ -64,6 +64,7 @@
   flex: 1;
   margin-left: 10px;
   min-width: 55px;
+  word-wrap: break-word;
 }
 
 .task-description {

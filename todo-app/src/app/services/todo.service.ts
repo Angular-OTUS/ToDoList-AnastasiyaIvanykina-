@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 export interface Task {
   id: number;
@@ -49,5 +50,13 @@ export class TodoService {
       task.id === updatedTask.id ? updatedTask : task,
     );
     this.tasksSubject.next(updatedTasks);
+  }
+
+  getStatuses(): Observable<(boolean | null | undefined)[]> {
+    return this.tasks$.pipe(
+      map((tasks: Task[]) =>
+        Array.from(new Set(tasks.map((task: Task) => task.status))),
+      ),
+    );
   }
 }

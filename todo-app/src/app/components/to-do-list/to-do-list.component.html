@@ -1,10 +1,10 @@
-<app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
-<div *ngIf="!isLoading" class="outer-container">
+<app-task-control-panel (filterChange)="applyFilter($event)"></app-task-control-panel>
+<div class="outer-container">
   <div class="task-container">
     <h1 class="title">{{ title }}</h1>
     <ul class="task-list">
       <li
-        *ngFor="let task of tasks | async; trackBy: trackByTaskId"
+        *ngFor="let task of filteredTasks$ | async; trackBy: trackByTaskId"
         [ngClass]="{ selected: task.id === selectedItemId }"
         appClick
         (singleClick)="handleClick(task.id, $event)"
@@ -12,15 +12,10 @@
       >
         <div class="task-item">
           <ng-container *ngIf="task.id !== editingTaskId; else editMode">
-            <form
-              [formGroup]="viewTaskForm"
-              class="view-task-form"
-              (click)="toggleDescription(task.id, $event)"
-            >
+            <form class="view-task-form" (click)="toggleDescription(task.id, $event)">
               <input
                 type="checkbox"
                 class="custom-checkbox"
-                formControlName="viewStatus"
                 [checked]="task.status === true"
                 (change)="toggleStatus(task)"
               />
@@ -56,11 +51,11 @@
                   />
                 </mat-form-field>
                 <mat-form-field class="edit-task-field">
-                  <textarea
-                    matInput
-                    formControlName="editDescription"
-                    placeholder="Edit description"
-                  ></textarea>
+<textarea
+  matInput
+  formControlName="editDescription"
+  placeholder="Edit description"
+></textarea>
                 </mat-form-field>
                 <div class="button-group edit-mode-buttons">
                   <app-button
@@ -85,11 +80,7 @@
       </li>
     </ul>
     <div class="input-container">
-      <form
-        [formGroup]="addTaskForm"
-        (ngSubmit)="addTask()"
-        class="input-block"
-      >
+      <form [formGroup]="addTaskForm" (ngSubmit)="addTask()" class="input-block">
         <mat-form-field class="task-input-field">
           <input
             matInput
@@ -99,12 +90,12 @@
           />
         </mat-form-field>
         <mat-form-field class="task-input-field">
-          <textarea
-            matInput
-            class="task-input"
-            formControlName="newDescription"
-            placeholder="Task description"
-          ></textarea>
+<textarea
+  matInput
+  class="task-input"
+  formControlName="newDescription"
+  placeholder="Task description"
+></textarea>
         </mat-form-field>
         <app-button
           [disabled]="addTaskForm.invalid"
