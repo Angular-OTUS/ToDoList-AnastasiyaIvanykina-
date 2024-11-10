@@ -56,7 +56,6 @@ export class ToDoListComponent implements OnInit, OnDestroy {
   public deleteButtonTitle: string = 'Delete';
   public tasks$!: Observable<Task[]>;
   public filteredTasks$!: Observable<Task[]>;
-  public statuses$!: Observable<(boolean | null | undefined)[]>;
   public addTaskForm: FormGroup;
   public editTaskForm: FormGroup;
   public viewTaskForm: FormGroup;
@@ -125,6 +124,8 @@ export class ToDoListComponent implements OnInit, OnDestroy {
       next: (addedTask) => {
         this.toastService.showSuccess('Task added to backlog!');
         this.editingTaskId = null;
+        const currentTasks = this.todoService.tasksSubject.value;
+        this.todoService.tasksSubject.next([...currentTasks, addedTask]);
       },
       error: (err) => {
         console.error('Error adding task:', err);

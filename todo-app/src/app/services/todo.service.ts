@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 
 export interface Task {
   id: string;
@@ -15,7 +15,7 @@ export interface Task {
 })
 export class TodoService {
   private apiUrl = 'http://localhost:3000/tasks';
-  private tasksSubject = new BehaviorSubject<Task[]>([]);
+  public tasksSubject = new BehaviorSubject<Task[]>([]);
   public tasks$ = this.tasksSubject.asObservable();
 
   constructor(private http: HttpClient) {
@@ -60,14 +60,6 @@ export class TodoService {
         );
         this.tasksSubject.next(currentTasks);
       }),
-    );
-  }
-
-  getStatuses(): Observable<(boolean | null | undefined)[]> {
-    return this.tasks$.pipe(
-      map((tasks: Task[]) =>
-        Array.from(new Set(tasks.map((task: Task) => task.status))),
-      ),
     );
   }
 }
