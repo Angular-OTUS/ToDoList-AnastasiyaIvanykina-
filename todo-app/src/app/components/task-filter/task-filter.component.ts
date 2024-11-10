@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
-import { FilterOption } from './filter-option.interface'; // Импорт интерфейса
+import { FilterOption } from './filter-option.interface';
 
 @Component({
   selector: 'app-task-filter',
@@ -13,14 +13,9 @@ import { FilterOption } from './filter-option.interface'; // Импорт инт
 })
 export class TaskFilterComponent {
   @Input() filterTitle: string = 'Filter by Status';
+  @Input() filterOptions: FilterOption[] = [];
   @Output() filterChange = new EventEmitter<string | null>();
   selectedFilter: string | null = null;
-
-  filterOptions: FilterOption[] = [
-    { value: null, label: 'ALL' },
-    { value: 'completed', label: 'Completed' },
-    { value: 'in progress', label: 'In Progress' },
-  ];
 
   onFilterChange(filter: string | null) {
     this.filterChange.emit(filter);

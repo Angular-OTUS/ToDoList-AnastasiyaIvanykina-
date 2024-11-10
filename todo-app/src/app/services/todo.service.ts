@@ -1,55 +1,66 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { Observable, BehaviorSubject } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 
 export interface Task {
-  id: number;
+  id: string;
   text: string;
   description: string;
-  status?: boolean | null; // undefined for backlog, null for InProgress, true for Completed for future Kanban board
+  status?: boolean | null;
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class TodoService {
-  private tasksSubject = new BehaviorSubject<Task[]>([
-    {
-      id: 1,
-      text: 'Buy a Porsche',
-      description: 'Purchase a new Porsche car',
-      status: undefined,
-    },
-    {
-      id: 2,
-      text: 'Take a walk with the dog',
-      description: 'Walk the dog in the park',
-      status: null,
-    },
-  ]);
-  tasks$ = this.tasksSubject.asObservable();
+  private apiUrl = 'http://localhost:3000/tasks';
+  private tasksSubject = new BehaviorSubject<Task[]>([]);
+  public tasks$ = this.tasksSubject.asObservable();
+
+  constructor(private http: HttpClient) {
+    this.loadTasks();
+  }
+
+  private loadTasks(): void {
+    this.http.get<Task[]>(this.apiUrl).subscribe((tasks) => {
+      this.tasksSubject.next(tasks);
+    });
+  }
 
   getTasks(): Observable<Task[]> {
     return this.tasks$;
   }
 
-  addTask(task: Task): void {
-    const tasks = this.tasksSubject.getValue();
-    this.tasksSubject.next([...tasks, task]);
-  }
-
-  deleteTask(id: number): void {
-    const tasks = this.tasksSubject.getValue();
-    const updatedTasks = tasks.filter((task) => task.id !== id);
-    this.tasksSubject.next(updatedTasks);
-  }
-
-  updateTask(updatedTask: Task): void {
-    const tasks = this.tasksSubject.getValue();
-    const updatedTasks = tasks.map((task) =>
-      task.id === updatedTask.id ? updatedTask : task,
+  addTask(task: Task): Observable<Task> {
+    return this.http.post<Task>(this.apiUrl, task).pipe(
+      tap((newTask) => {
+        const currentTasks = this.tasksSubject.value;
+        this.tasksSubject.next([...currentTasks, newTask]);
+      }),
     );
-    this.tasksSubject.next(updatedTasks);
+  }
+
+  deleteTask(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+      tap(() => {
+        const currentTasks = this.tasksSubject.value.filter(
+          (task) => task.id !== id,
+        );
+        this.tasksSubject.next(currentTasks);
+      }),
+    );
+  }
+
+  updateTask(task: Task): Observable<Task> {
+    return this.http.put<Task>(`${this.apiUrl}/${task.id}`, task).pipe(
+      tap((updatedTask) => {
+        const currentTasks = this.tasksSubject.value.map((t) =>
+          t.id === updatedTask.id ? updatedTask : t,
+        );
+        this.tasksSubject.next(currentTasks);
+      }),
+    );
   }
 
   getStatuses(): Observable<(boolean | null | undefined)[]> {

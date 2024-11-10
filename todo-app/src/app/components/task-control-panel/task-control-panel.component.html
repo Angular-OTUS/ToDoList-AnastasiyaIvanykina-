@@ -1,3 +1,9 @@
-<div class="control-panel">
-  <app-task-filter (filterChange)="onFilterChange($event)"></app-task-filter>
-</div>
+<app-task-filter
+  [filterTitle]="'Filter by Status'"
+  [filterOptions]="[
+    { value: null, label: 'ALL' },
+    { value: 'completed', label: 'Completed' },
+    { value: 'in progress', label: 'In Progress' },
+  ]"
+  (filterChange)="onFilterChange($event)"
+></app-task-filter>

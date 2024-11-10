@@ -1,0 +1,33 @@
+{
+  "tasks": [
+    {
+      "id": "1",
+      "text": "Buy a Porsche",
+      "description": "Purchase a new Porsche car",
+      "status": false
+    },
+    {
+      "id": "2",
+      "text": "Take a walk with the dog",
+      "description": "Walk the dog in the park",
+      "status": true
+    },
+    {
+      "id": "4bf11425-bac4-45e8-828b-b2570be75972",
+      "text": "serftwe",
+      "description": "wrerw",
+      "status": true
+    },
+    {
+      "id": "27f8d036-01ea-4c03-b80f-72becad1c1bb",
+      "text": "4tret",
+      "description": "ertert"
+    },
+    {
+      "id": "f6c65180-37d4-4456-8645-1fbd17749bff",
+      "text": "вапваqйцуйц weqwe",
+      "description": "пвапqwe w wewqe",
+      "status": false
+    }
+  ]
+}
