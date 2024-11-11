@@ -17,7 +17,7 @@ export class TaskFilterComponent {
   @Output() filterChange: EventEmitter<string | null> = new EventEmitter<
     string | null
   >();
-  selectedFilter: string | null = null;
+  public selectedFilter?: string;
 
   onFilterChange(filter: string | null): void {
     this.filterChange.emit(filter);

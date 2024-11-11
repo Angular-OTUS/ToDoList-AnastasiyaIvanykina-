@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TaskFilterComponent } from '../task-filter/task-filter.component';
+import { FilterOption } from '../task-filter/filter-option.interface';
 
 @Component({
   selector: 'app-task-control-panel',
@@ -14,7 +15,7 @@ export class TaskControlPanelComponent {
     string | null
   >();
 
-  filterOptions = [
+  filterOptions: FilterOption[] = [
     { value: null, label: 'ALL' },
     { value: 'completed', label: 'Completed' },
     { value: 'in progress', label: 'In Progress' },
