@@ -14,10 +14,12 @@ import { FilterOption } from './filter-option.interface';
 export class TaskFilterComponent {
   @Input() filterTitle: string = 'Filter by Status';
   @Input() filterOptions: FilterOption[] = [];
-  @Output() filterChange = new EventEmitter<string | null>();
+  @Output() filterChange: EventEmitter<string | null> = new EventEmitter<
+    string | null
+  >();
   selectedFilter: string | null = null;
 
-  onFilterChange(filter: string | null) {
+  onFilterChange(filter: string | null): void {
     this.filterChange.emit(filter);
   }
 }

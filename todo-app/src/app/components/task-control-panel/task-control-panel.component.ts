@@ -10,9 +10,17 @@ import { TaskFilterComponent } from '../task-filter/task-filter.component';
   styleUrls: ['./task-control-panel.component.css'],
 })
 export class TaskControlPanelComponent {
-  @Output() filterChange = new EventEmitter<string | null>();
+  @Output() filterChange: EventEmitter<string | null> = new EventEmitter<
+    string | null
+  >();
 
-  onFilterChange(filter: string | null) {
+  filterOptions = [
+    { value: null, label: 'ALL' },
+    { value: 'completed', label: 'Completed' },
+    { value: 'in progress', label: 'In Progress' },
+  ];
+
+  onFilterChange(filter: string | null): void {
     this.filterChange.emit(filter);
   }
 }

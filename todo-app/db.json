@@ -10,12 +10,6 @@
       "id": "2",
       "text": "Take a walk with the dog",
       "description": "Walk the dog in the park",
-      "status": true
-    },
-    {
-      "id": "4bf11425-bac4-45e8-828b-b2570be75972",
-      "text": "go home",
-      "description": "sleep\n",
       "status": false
     }
   ]

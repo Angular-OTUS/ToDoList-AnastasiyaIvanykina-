@@ -27,7 +27,6 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner/loading-sp
 import { TaskControlPanelComponent } from '../task-control-panel/task-control-panel.component';
 import { TodoCreateItemComponent } from '../todo-create-item/todo-create-item.component';
 import { ErrorHandlerService } from '../../services/error-handler.service';
-import { v4 as uuidv4 } from 'uuid';
 
 @Component({
   selector: 'app-to-do-list',
@@ -56,14 +55,15 @@ export class ToDoListComponent implements OnInit, OnDestroy {
   public deleteButtonTitle: string = 'Delete';
   public tasks$!: Observable<Task[]>;
   public filteredTasks$!: Observable<Task[]>;
-  public addTaskForm: FormGroup;
   public editTaskForm: FormGroup;
   public viewTaskForm: FormGroup;
   public selectedItemId: string | null = null;
   public editingTaskId: string | null = null;
   public isLoading: boolean = true;
-  private filterSubject = new BehaviorSubject<string | null>(null);
-  private destroy$ = new Subject<void>();
+  private filterSubject: BehaviorSubject<string | null> = new BehaviorSubject<
+    string | null
+  >(null);
+  private destroy$: Subject<void> = new Subject<void>();
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -72,11 +72,6 @@ export class ToDoListComponent implements OnInit, OnDestroy {
     private toastService: ToastService,
     private errorHandler: ErrorHandlerService,
   ) {
-    this.addTaskForm = this.fb.group({
-      newTask: ['', Validators.required],
-      newDescription: ['', Validators.required],
-    });
-
     this.editTaskForm = this.fb.group({
       editTask: ['', Validators.required],
       editDescription: ['', Validators.required],
@@ -92,58 +87,50 @@ export class ToDoListComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.isLoading = true;
-    this.tasks$ = this.todoService.getTasks();
-    this.filteredTasks$ = combineLatest([this.tasks$, this.filterSubject]).pipe(
-      map(([tasks, filter]) => {
-        if (!filter) {
-          return tasks;
-        }
-        return tasks.filter((task) => task.status === (filter === 'completed'));
-      }),
-    );
-    this.tasks$.pipe(takeUntil(this.destroy$)).subscribe({
-      next: () => {
-        this.isLoading = false;
-      },
-      error: (err) => {
-        this.errorHandler.handleError(err);
-        this.isLoading = false;
-      },
-    });
+    setTimeout(() => {
+      this.tasks$ = this.todoService.getTasks();
+      this.filteredTasks$ = combineLatest([
+        this.tasks$,
+        this.filterSubject,
+      ]).pipe(
+        map(([tasks, filter]) => {
+          if (!filter) {
+            return tasks;
+          }
+          return tasks.filter(
+            (task) => task.status === (filter === 'completed'),
+          );
+        }),
+      );
+      this.tasks$.pipe(takeUntil(this.destroy$)).subscribe({
+        next: () => {
+          this.isLoading = false;
+        },
+        error: (err) => {
+          this.errorHandler.handleError(err);
+          this.isLoading = false;
+        },
+      });
+    }, 2000);
   }
 
-  public addTask(task: { text: string; description: string }): void {
-    const newTask: Task = {
-      id: uuidv4(),
-      text: task.text.trim(),
-      description: task.description.trim(),
-      status: undefined,
-    };
-
-    this.todoService.addTask(newTask).subscribe({
-      next: (addedTask) => {
-        this.toastService.showSuccess('Task added to backlog!');
-        this.editingTaskId = null;
-        const currentTasks = this.todoService.tasksSubject.value;
-        this.todoService.tasksSubject.next([...currentTasks, addedTask]);
-      },
-      error: (err) => {
-        console.error('Error adding task:', err);
-        this.errorHandler.handleError(err);
-      },
-    });
+  public onTaskCreated(task: { text: string; description: string }): void {
+    this.toastService.showSuccess(`Task "${task.text}" created successfully!`);
   }
 
   public deleteTask(taskId: string, event: Event): void {
     event.stopPropagation();
-    this.todoService.deleteTask(taskId).subscribe({
-      next: () => {
-        this.toastService.showSuccess('Task deleted successfully!');
-      },
-      error: (err) => {
-        this.errorHandler.handleError(err);
-      },
-    });
+    this.todoService
+      .deleteTask(taskId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.toastService.showSuccess('Task deleted successfully!');
+        },
+        error: (err) => {
+          this.errorHandler.handleError(err);
+        },
+      });
   }
 
   public handleClick(taskId: string, event: Event): void {
@@ -189,33 +176,41 @@ export class ToDoListComponent implements OnInit, OnDestroy {
       description: this.editTaskForm.get('editDescription')?.value,
       status: this.editTaskForm.get('editStatus')?.value,
     };
-    this.todoService.updateTask(updatedTask).subscribe({
-      next: () => {
-        this.editingTaskId = null;
-        this.editTaskForm.reset();
-        this.toastService.showSuccess('Task updated successfully!');
-      },
-      error: (err) => {
-        this.errorHandler.handleError(err);
-      },
-    });
+
+    this.todoService
+      .updateTask(updatedTask)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.editingTaskId = null;
+          this.editTaskForm.reset();
+          this.toastService.showSuccess('Task updated successfully!');
+        },
+        error: (err) => {
+          this.errorHandler.handleError(err);
+        },
+      });
   }
+
   public toggleStatus(task: Task): void {
     const updatedTask: Task = {
       ...task,
       status: !task.status,
     };
-    this.todoService.updateTask(updatedTask).subscribe({
-      next: () => {
-        const message = updatedTask.status
-          ? 'Task marked as completed!'
-          : 'Task marked as incomplete!';
-        this.toastService.showSuccess(message);
-      },
-      error: (err) => {
-        this.errorHandler.handleError(err);
-      },
-    });
+    this.todoService
+      .updateTask(updatedTask)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          const message = updatedTask.status
+            ? 'Task marked as completed!'
+            : 'Task marked as incomplete!';
+          this.toastService.showSuccess(message);
+        },
+        error: (err) => {
+          this.errorHandler.handleError(err);
+        },
+      });
   }
 
   private showConfirmationModal(newTaskId: string): void {
@@ -253,6 +248,7 @@ export class ToDoListComponent implements OnInit, OnDestroy {
           return tasks;
         }
       }),
+      takeUntil(this.destroy$),
     );
   }
 

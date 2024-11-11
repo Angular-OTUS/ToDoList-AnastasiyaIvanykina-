@@ -1,9 +1,5 @@
 <app-task-filter
   [filterTitle]="'Filter by Status'"
-  [filterOptions]="[
-    { value: null, label: 'ALL' },
-    { value: 'completed', label: 'Completed' },
-    { value: 'in progress', label: 'In Progress' },
-  ]"
+  [filterOptions]="filterOptions"
   (filterChange)="onFilterChange($event)"
 ></app-task-filter>
