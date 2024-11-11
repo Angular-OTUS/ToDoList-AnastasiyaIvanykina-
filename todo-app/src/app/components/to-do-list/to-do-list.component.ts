@@ -19,10 +19,14 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ButtonComponent } from '../button/button.component';
 import { TodoService, Task } from '../../services/todo.service';
 import { ToastService } from '../../services/toast.service';
-import { Observable, Subject } from 'rxjs';
-import { map, first, takeUntil, delay } from 'rxjs/operators';
+import { Observable, Subject, BehaviorSubject, combineLatest } from 'rxjs';
+import { map, first, takeUntil } from 'rxjs/operators';
 import { ClickDirective } from '../../shared/click.directive';
 import { TooltipDirective } from '../../shared/tooltip.directive';
+import { LoadingSpinnerComponent } from '../../shared/loading-spinner/loading-spinner.component';
+import { TaskControlPanelComponent } from '../task-control-panel/task-control-panel.component';
+import { TodoCreateItemComponent } from '../todo-create-item/todo-create-item.component';
+import { ErrorHandlerService } from '../../services/error-handler.service';
 
 @Component({
   selector: 'app-to-do-list',
@@ -37,6 +41,9 @@ import { TooltipDirective } from '../../shared/tooltip.directive';
     ButtonComponent,
     ClickDirective,
     TooltipDirective,
+    LoadingSpinnerComponent,
+    TaskControlPanelComponent,
+    TodoCreateItemComponent,
   ],
   templateUrl: './to-do-list.component.html',
   styleUrls: ['./to-do-list.component.css'],
@@ -44,82 +51,89 @@ import { TooltipDirective } from '../../shared/tooltip.directive';
 })
 export class ToDoListComponent implements OnInit, OnDestroy {
   public title: string = 'ToDo-list';
-  public addButtonTitle: string = 'Add task';
-  public tasks!: Observable<Task[]>;
-  public addTaskForm: FormGroup;
+  public saveButtonTitle: string = 'Save';
+  public deleteButtonTitle: string = 'Delete';
+  public tasks$!: Observable<Task[]>;
+  public filteredTasks$!: Observable<Task[]>;
   public editTaskForm: FormGroup;
   public viewTaskForm: FormGroup;
-  public selectedItemId: number | null = null;
-  public editingTaskId: number | null = null;
+  public selectedItemId: string | null = null;
+  public editingTaskId: string | null = null;
   public isLoading: boolean = true;
-  private destroy$ = new Subject<void>();
+  private filterSubject: BehaviorSubject<string | null> = new BehaviorSubject<
+    string | null
+  >(null);
+  private destroy$: Subject<void> = new Subject<void>();
 
   constructor(
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private todoService: TodoService,
     private toastService: ToastService,
+    private errorHandler: ErrorHandlerService,
   ) {
-    this.addTaskForm = this.fb.group({
-      newTask: ['', Validators.required],
-      newDescription: ['', Validators.required],
-    });
-
     this.editTaskForm = this.fb.group({
       editTask: ['', Validators.required],
       editDescription: ['', Validators.required],
+      editStatus: [false],
     });
 
     this.viewTaskForm = this.fb.group({
       viewTask: ['', Validators.required],
       viewDescription: ['', Validators.required],
+      viewStatus: [false],
     });
   }
 
   ngOnInit(): void {
     this.isLoading = true;
-    this.tasks = this.todoService
-      .getTasks()
-      .pipe(delay(500), takeUntil(this.destroy$));
-    this.tasks.pipe(takeUntil(this.destroy$)).subscribe({
-      next: () => {
-        this.isLoading = false;
-      },
-      error: (err) => {
-        console.error('Error loading tasks:', err);
-        this.isLoading = false;
-      },
-    });
-  }
-
-  public addTask(): void {
-    if (this.addTaskForm.valid) {
-      this.tasks.pipe(first(), takeUntil(this.destroy$)).subscribe({
-        next: (tasks) => {
-          const maxId = Math.max(...tasks.map((task: Task) => task.id));
-          this.todoService.addTask({
-            id: maxId + 1,
-            text: this.addTaskForm.value.newTask.trim(),
-            description: this.addTaskForm.value.newDescription.trim(),
-          });
-          this.addTaskForm.reset();
-          this.toastService.showToast('Task added successfully!');
-          this.editingTaskId = null;
+    setTimeout(() => {
+      this.tasks$ = this.todoService.getTasks();
+      this.filteredTasks$ = combineLatest([
+        this.tasks$,
+        this.filterSubject,
+      ]).pipe(
+        map(([tasks, filter]) => {
+          if (!filter) {
+            return tasks;
+          }
+          return tasks.filter(
+            (task) => task.status === (filter === 'completed'),
+          );
+        }),
+      );
+      this.tasks$.pipe(takeUntil(this.destroy$)).subscribe({
+        next: () => {
+          this.isLoading = false;
         },
         error: (err) => {
-          this.toastService.showToast('Failed to add task!');
+          this.errorHandler.handleError(err);
+          this.isLoading = false;
         },
       });
-    }
+    }, 2000);
   }
 
-  public deleteTask(taskId: number, event: Event): void {
+  public onTaskCreated(task: { text: string; description: string }): void {
+    this.toastService.showSuccess(`Task "${task.text}" created successfully!`);
+  }
+
+  public deleteTask(taskId: string, event: Event): void {
     event.stopPropagation();
-    this.todoService.deleteTask(taskId);
-    this.toastService.showToast('Task deleted successfully!');
+    this.todoService
+      .deleteTask(taskId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.toastService.showSuccess('Task deleted successfully!');
+        },
+        error: (err) => {
+          this.errorHandler.handleError(err);
+        },
+      });
   }
 
-  public handleClick(taskId: number, event: Event): void {
+  public handleClick(taskId: string, event: Event): void {
     event.stopPropagation();
     if (this.editingTaskId !== null && this.editingTaskId !== taskId) {
       this.showConfirmationModal(taskId);
@@ -129,13 +143,13 @@ export class ToDoListComponent implements OnInit, OnDestroy {
     }
   }
 
-  public editTask(taskId: number): void {
+  public editTask(taskId: string): void {
     if (this.selectedItemId !== taskId) {
       this.selectedItemId = taskId;
       this.cdr.detectChanges();
     }
     this.editingTaskId = taskId;
-    this.tasks
+    this.tasks$
       .pipe(
         first(),
         map((tasks) => tasks.find((task: Task) => task.id === taskId)),
@@ -146,6 +160,7 @@ export class ToDoListComponent implements OnInit, OnDestroy {
           this.editTaskForm.patchValue({
             editTask: task.text,
             editDescription: task.description,
+            editStatus: task.status === true,
           });
           this.cdr.detectChanges();
         } else {
@@ -154,19 +169,51 @@ export class ToDoListComponent implements OnInit, OnDestroy {
       });
   }
 
-  public saveTask(taskId: number): void {
+  public saveTask(taskId: string): void {
     const updatedTask: Task = {
       id: taskId,
       text: this.editTaskForm.get('editTask')?.value,
       description: this.editTaskForm.get('editDescription')?.value,
+      status: this.editTaskForm.get('editStatus')?.value,
     };
-    this.todoService.updateTask(updatedTask);
-    this.editingTaskId = null;
-    this.editTaskForm.reset();
-    this.toastService.showToast('Task updated successfully!');
+
+    this.todoService
+      .updateTask(updatedTask)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.editingTaskId = null;
+          this.editTaskForm.reset();
+          this.toastService.showSuccess('Task updated successfully!');
+        },
+        error: (err) => {
+          this.errorHandler.handleError(err);
+        },
+      });
   }
 
-  private showConfirmationModal(newTaskId: number): void {
+  public toggleStatus(task: Task): void {
+    const updatedTask: Task = {
+      ...task,
+      status: !task.status,
+    };
+    this.todoService
+      .updateTask(updatedTask)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          const message = updatedTask.status
+            ? 'Task marked as completed!'
+            : 'Task marked as incomplete!';
+          this.toastService.showSuccess(message);
+        },
+        error: (err) => {
+          this.errorHandler.handleError(err);
+        },
+      });
+  }
+
+  private showConfirmationModal(newTaskId: string): void {
     const confirmation = confirm('Do you really want to undo the changes?');
     if (confirmation) {
       this.editingTaskId = null;
@@ -175,13 +222,34 @@ export class ToDoListComponent implements OnInit, OnDestroy {
     }
   }
 
-  public toggleDescription(taskId: number, event: Event): void {
+  public toggleDescription(taskId: string, event: Event): void {
     event.stopPropagation();
     this.selectedItemId = this.selectedItemId === taskId ? null : taskId;
   }
 
-  public trackByTaskId(index: number, task: Task): number {
+  public trackByTaskId(index: number, task: Task): string {
     return task.id;
+  }
+
+  public applyFilter(filter: string | null): void {
+    this.filterSubject.next(filter);
+    this.filteredTasks$ = combineLatest([this.tasks$, this.filterSubject]).pipe(
+      map(([tasks, filter]) => {
+        if (!filter) {
+          return tasks;
+        }
+        if (filter === 'completed') {
+          return tasks.filter((task) => task.status === true);
+        } else if (filter === 'in progress') {
+          return tasks.filter(
+            (task) => task.status === false || task.status === null,
+          );
+        } else {
+          return tasks;
+        }
+      }),
+      takeUntil(this.destroy$),
+    );
   }
 
   ngOnDestroy(): void {

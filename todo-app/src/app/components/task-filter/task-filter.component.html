@@ -1,0 +1,11 @@
+<mat-form-field appearance="fill" class="filter-form-field">
+  <mat-label>{{ filterTitle }}</mat-label>
+  <mat-select
+    (selectionChange)="onFilterChange($event.value)"
+    [(value)]="selectedFilter"
+  >
+    <mat-option *ngFor="let option of filterOptions" [value]="option.value">
+      {{ option.label }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>

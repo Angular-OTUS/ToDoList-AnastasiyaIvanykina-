@@ -1,10 +1,3 @@
-.spinner {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
-
 .outer-container {
   display: flex;
   justify-content: center;
@@ -64,10 +57,14 @@
   min-height: 56px;
   margin-left: 10px;
   margin-right: 10px;
+  text-wrap: normal;
 }
 
 .task-text {
   flex: 1;
+  margin-left: 10px;
+  min-width: 55px;
+  word-wrap: break-word;
 }
 
 .task-description {
@@ -82,7 +79,7 @@
   transition: height 0.3s ease;
   margin-left: 10px;
   margin-right: 10px;
-  min-width: 75px;
+  min-width: 55px;
 }
 
 .task-description.ng-star-inserted {
@@ -216,4 +213,50 @@
 
 .button-container {
   margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.custom-checkbox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  margin-right: 10px;
+  appearance: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.custom-checkbox:checked {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.custom-checkbox:checked::after {
+  content: '✔';
+  color: #fff;
+  font-size: 14px;
+}
+
+.custom-checkbox:not(:disabled):not(:checked):hover {
+  border-color: #b3d7ff;
+}
+
+.custom-checkbox:not(:disabled):active {
+  background-color: #b3d7ff;
+  border-color: #b3d7ff;
+}
+
+.custom-checkbox:focus {
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.custom-checkbox:focus:not(:checked) {
+  border-color: #80bdff;
 }
