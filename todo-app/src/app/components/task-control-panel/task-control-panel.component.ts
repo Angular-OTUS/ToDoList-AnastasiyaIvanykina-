@@ -17,8 +17,8 @@ export class TaskControlPanelComponent {
 
   filterOptions: FilterOption[] = [
     { value: null, label: 'ALL' },
-    { value: 'completed', label: 'Completed' },
-    { value: 'in progress', label: 'In Progress' },
+    { value: 'completed', label: 'COMPLETED' },
+    { value: 'in progress', label: 'PENDING' },
   ];
 
   onFilterChange(filter: string | null): void {
