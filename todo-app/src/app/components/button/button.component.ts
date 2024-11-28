@@ -1,4 +1,10 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TooltipDirective } from '../../shared/tooltip.directive';
 import { ClickDirective } from '../../shared/click.directive';
@@ -9,6 +15,7 @@ import { ClickDirective } from '../../shared/click.directive';
   templateUrl: './button.component.html',
   styleUrls: ['./button.component.css'],
   imports: [CommonModule, TooltipDirective, ClickDirective],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ButtonComponent {
   @Input() buttonText?: string;

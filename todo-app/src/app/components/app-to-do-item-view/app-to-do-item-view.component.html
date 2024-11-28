@@ -1,0 +1,49 @@
+<div class="app-task-details">
+  <div *ngIf="task">
+    <h2>{{ task.text }}</h2>
+    <p>{{ task.description }}</p>
+  </div>
+  <ng-container *ngIf="!isEditing; else editMode">
+    <div *ngIf="task" class="app-task-description">
+      <input
+        type="checkbox"
+        [checked]="task.status"
+        (change)="toggleStatus()"
+      />
+      <span (dblclick)="enableEditing()">{{ task.description }}</span>
+    </div>
+  </ng-container>
+  <ng-template #editMode>
+    <form
+      [formGroup]="editTaskForm"
+      class="app-edit-task-form"
+      (ngSubmit)="saveTask()"
+    >
+      <div class="app-edit-fields">
+        <input
+          type="checkbox"
+          class="app-custom-checkbox"
+          formControlName="editStatus"
+        />
+        <mat-form-field class="app-edit-task-field">
+          <input matInput formControlName="editTask" placeholder="Edit task" />
+        </mat-form-field>
+        <mat-form-field class="app-edit-task-field">
+          <textarea
+            matInput
+            formControlName="editDescription"
+            placeholder="Edit description"
+          ></textarea>
+        </mat-form-field>
+        <div class="app-button-group app-edit-mode-buttons">
+          <app-button
+            [buttonClasses]="{ 'app-button--save': true }"
+            tooltipText="Save changes"
+          >
+            {{ saveButtonTitle }}
+          </app-button>
+        </div>
+      </div>
+    </form>
+  </ng-template>
+</div>
