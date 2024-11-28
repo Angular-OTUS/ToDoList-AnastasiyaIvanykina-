@@ -7,6 +7,7 @@ import { LoadingSpinnerComponent } from './shared/loading-spinner/loading-spinne
 import { TaskControlPanelComponent } from './components/task-control-panel/task-control-panel.component';
 import { TaskFilterComponent } from './components/task-filter/task-filter.component';
 import { AppToDoItemViewComponent } from './components/app-to-do-item-view/app-to-do-item-view.component';
+import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 
 @Component({
   selector: 'app-root',
@@ -20,6 +21,7 @@ import { AppToDoItemViewComponent } from './components/app-to-do-item-view/app-t
     TaskControlPanelComponent,
     TaskFilterComponent,
     AppToDoItemViewComponent,
+    PageNotFoundComponent,
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],

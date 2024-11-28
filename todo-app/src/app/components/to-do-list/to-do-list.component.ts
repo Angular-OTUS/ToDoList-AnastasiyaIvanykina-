@@ -14,7 +14,7 @@ import { ButtonComponent } from '../button/button.component';
 import { TodoService, Task } from '../../services/todo.service';
 import { ToastService } from '../../services/toast.service';
 import { Observable, Subject, BehaviorSubject, combineLatest } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
+import { map, takeUntil, filter } from 'rxjs/operators';
 import { ClickDirective } from '../../shared/click.directive';
 import { TooltipDirective } from '../../shared/tooltip.directive';
 import { LoadingSpinnerComponent } from '../../shared/loading-spinner/loading-spinner.component';
@@ -106,11 +106,12 @@ export class ToDoListComponent implements OnInit, OnDestroy {
 
     this.store
       .select(selectSelectedTask)
-      .pipe(takeUntil(this.destroy$))
+      .pipe(
+        takeUntil(this.destroy$),
+        filter((task) => !!task),
+      )
       .subscribe((task) => {
-        if (task) {
-          this.selectedTask = task;
-        }
+        this.selectedTask = task;
       });
   }
 

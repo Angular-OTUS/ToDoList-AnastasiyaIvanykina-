@@ -63,23 +63,37 @@ export class AppToDoItemViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe((params) => {
+    this.subscribeToRouteParams();
+    this.subscribeToEditState();
+  }
+
+  private subscribeToRouteParams(): void {
+    this.route.paramMap.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       const taskId = params.get('id');
       if (taskId) {
-        this.todoService.getTaskById(taskId).subscribe({
-          next: (task) => {
-            this.task = task;
-            this.editTaskForm.patchValue({
-              editTask: task.text,
-              editDescription: task.description,
-              editStatus: task.status,
-            });
-          },
-          error: (err) => this.errorHandler.handleError(err),
-        });
+        this.loadTask(taskId);
       }
     });
+  }
 
+  private loadTask(taskId: string): void {
+    this.todoService
+      .getTaskById(taskId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (task) => {
+          this.task = task;
+          this.editTaskForm.patchValue({
+            editTask: task.text,
+            editDescription: task.description,
+            editStatus: task.status,
+          });
+        },
+        error: (err) => this.errorHandler.handleError(err),
+      });
+  }
+
+  private subscribeToEditState(): void {
     this.editStateService.isEditing$
       .pipe(takeUntil(this.destroy$))
       .subscribe((isEditing) => {
