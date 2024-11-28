@@ -28,6 +28,7 @@ import { Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
 import { selectSelectedTask } from '../../store/selectors/task.selectors';
 import { AppToDoItemViewComponent } from '../app-to-do-item-view/app-to-do-item-view.component';
+import { EditStateService } from '../../services/edit-state.service';
 
 @Component({
   selector: 'app-to-do-list',
@@ -72,6 +73,7 @@ export class ToDoListComponent implements OnInit, OnDestroy {
     private errorHandler: ErrorHandlerService,
     private router: Router,
     private store: Store<AppState>,
+    private editStateService: EditStateService,
   ) {}
 
   ngOnInit(): void {
@@ -135,6 +137,7 @@ export class ToDoListComponent implements OnInit, OnDestroy {
     event.stopPropagation();
     this.selectedItemId = taskId;
     this.store.dispatch(selectTask({ taskId }));
+    this.editStateService.setEditingState(false);
     this.router
       .navigate(['/tasks', taskId])
       .then(() => {})

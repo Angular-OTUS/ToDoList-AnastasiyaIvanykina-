@@ -23,6 +23,7 @@ import { MatInputModule } from '@angular/material/input';
 import { CommonModule } from '@angular/common';
 import { ButtonComponent } from '../button/button.component';
 import { TaskState } from '../../store/reducers/task.reducer';
+import { EditStateService } from '../../services/edit-state.service';
 
 @Component({
   standalone: true,
@@ -52,6 +53,7 @@ export class AppToDoItemViewComponent implements OnInit, OnDestroy {
     private toastService: ToastService,
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
+    private editStateService: EditStateService,
   ) {
     this.editTaskForm = this.fb.group({
       editTask: ['', Validators.required],
@@ -77,16 +79,24 @@ export class AppToDoItemViewComponent implements OnInit, OnDestroy {
         });
       }
     });
+
+    this.editStateService.isEditing$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((isEditing) => {
+        this.isEditing = isEditing;
+      });
   }
 
   public enableEditing(): void {
     this.isEditing = true;
+    this.editStateService.setEditingState(true);
   }
 
   public saveTask(): void {
     if (!this.editTaskForm.dirty) {
       this.toastService.showError('No changes to save.');
       this.isEditing = false;
+      this.editStateService.setEditingState(false);
       return;
     }
     const updatedTask: Task = {
@@ -103,6 +113,7 @@ export class AppToDoItemViewComponent implements OnInit, OnDestroy {
         next: () => {
           this.toastService.showSuccess('Task updated successfully!');
           this.isEditing = false;
+          this.editStateService.setEditingState(false);
           this.task = updatedTask;
           this.cdr.detectChanges();
         },
