@@ -61,50 +61,6 @@
   align-items: center;
 }
 
-.app-edit-task-form .app-custom-checkbox {
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
-  margin-right: 10px;
-  appearance: none;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: #fff;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  flex-shrink: 0;
-}
-
-.app-edit-task-form .app-custom-checkbox:checked {
-  background-color: #007bff;
-  border-color: #007bff;
-}
-
-.app-edit-task-form .app-custom-checkbox:checked::after {
-  content: '✔';
-  color: #fff;
-  font-size: 14px;
-}
-
-.app-edit-task-form .app-custom-checkbox:not(:disabled):not(:checked):hover {
-  border-color: #b3d7ff;
-}
-
-.app-edit-task-form .app-custom-checkbox:not(:disabled):active {
-  background-color: #b3d7ff;
-  border-color: #b3d7ff;
-}
-
-.app-edit-task-form .app-custom-checkbox:focus {
-  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-}
-
-.app-edit-task-form .app-custom-checkbox:focus:not(:checked) {
-  border-color: #80bdff;
-}
-
 .app-button-group {
   display: flex;
   justify-content: flex-end;
@@ -113,12 +69,13 @@
 }
 
 .app-button-group .app-button--save {
-  background-color: #008000 !important;
+  background-color: #008000;
   color: #ffffff;
   border: none;
   padding: 10px 20px;
   border-radius: 4px;
   cursor: pointer;
+  min-height: 56px;
 }
 
 .app-button-group .app-button--save:hover {

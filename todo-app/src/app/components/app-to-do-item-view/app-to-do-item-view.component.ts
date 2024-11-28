@@ -64,13 +64,16 @@ export class AppToDoItemViewComponent implements OnInit, OnDestroy {
     this.route.paramMap.subscribe((params) => {
       const taskId = params.get('id');
       if (taskId) {
-        this.todoService.getTaskById(taskId).subscribe((task) => {
-          this.task = task;
-          this.editTaskForm.patchValue({
-            editTask: task.text,
-            editDescription: task.description,
-            editStatus: task.status,
-          });
+        this.todoService.getTaskById(taskId).subscribe({
+          next: (task) => {
+            this.task = task;
+            this.editTaskForm.patchValue({
+              editTask: task.text,
+              editDescription: task.description,
+              editStatus: task.status,
+            });
+          },
+          error: (err) => this.errorHandler.handleError(err),
         });
       }
     });
@@ -81,6 +84,11 @@ export class AppToDoItemViewComponent implements OnInit, OnDestroy {
   }
 
   public saveTask(): void {
+    if (!this.editTaskForm.dirty) {
+      this.toastService.showError('No changes to save.');
+      this.isEditing = false;
+      return;
+    }
     const updatedTask: Task = {
       id: this.task.id,
       text: this.editTaskForm.get('editTask')?.value,
@@ -98,15 +106,8 @@ export class AppToDoItemViewComponent implements OnInit, OnDestroy {
           this.task = updatedTask;
           this.cdr.detectChanges();
         },
-        error: (err) => {
-          this.errorHandler.handleError(err);
-        },
+        error: (err) => this.errorHandler.handleError(err),
       });
-  }
-
-  public toggleStatus(): void {
-    this.task.status = !this.task.status;
-    this.saveTask();
   }
 
   ngOnDestroy(): void {

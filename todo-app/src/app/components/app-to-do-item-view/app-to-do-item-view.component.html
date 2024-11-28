@@ -1,16 +1,10 @@
 <div class="app-task-details">
   <div *ngIf="task">
     <h2>{{ task.text }}</h2>
-    <p>{{ task.description }}</p>
   </div>
   <ng-container *ngIf="!isEditing; else editMode">
-    <div *ngIf="task" class="app-task-description">
-      <input
-        type="checkbox"
-        [checked]="task.status"
-        (change)="toggleStatus()"
-      />
-      <span (dblclick)="enableEditing()">{{ task.description }}</span>
+    <div (dblclick)="enableEditing()" *ngIf="task" class="app-task-description">
+      <span>{{ task.description }}</span>
     </div>
   </ng-container>
   <ng-template #editMode>
@@ -22,7 +16,7 @@
       <div class="app-edit-fields">
         <input
           type="checkbox"
-          class="app-custom-checkbox"
+          class="custom-checkbox"
           formControlName="editStatus"
         />
         <mat-form-field class="app-edit-task-field">
@@ -36,12 +30,13 @@
           ></textarea>
         </mat-form-field>
         <div class="app-button-group app-edit-mode-buttons">
-          <app-button
-            [buttonClasses]="{ 'app-button--save': true }"
-            tooltipText="Save changes"
+          <button
+            type="submit"
+            class="app-button--save"
+            [disabled]="!editTaskForm.dirty || !editTaskForm.valid"
           >
             {{ saveButtonTitle }}
-          </app-button>
+          </button>
         </div>
       </div>
     </form>
