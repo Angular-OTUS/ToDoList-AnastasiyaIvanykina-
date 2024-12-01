@@ -10,7 +10,7 @@
       "id": "dac17cd3-f706-4369-b142-f5272842aeb7",
       "text": "Папа, купи рыбу на ужин",
       "description": "Дикий лосось",
-      "status": true
+      "status": false
     },
     {
       "id": "9dc318c9-cf22-43cf-95b3-3eb0dc319379",
@@ -23,6 +23,11 @@
       "text": "Приготовить чак-чак",
       "description": "Рецепт:",
       "status": true
+    },
+    {
+      "id": "9b47ac69-9465-4e3b-a1ef-2687117a46c6",
+      "text": "Новая задача",
+      "description": "Без описания"
     }
   ]
 }

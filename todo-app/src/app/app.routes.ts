@@ -1,7 +1,8 @@
 import { Routes } from '@angular/router';
 import { ToDoListComponent } from './components/to-do-list/to-do-list.component';
 import { AppToDoItemViewComponent } from './components/app-to-do-item-view/app-to-do-item-view.component';
-import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component'; // Импортируем компонент для страницы 404
+import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
+import { BoardComponent } from './components/board/board.component';
 
 export const routes: Routes = [
   {
@@ -9,6 +10,8 @@ export const routes: Routes = [
     component: ToDoListComponent,
     children: [{ path: ':id', component: AppToDoItemViewComponent }],
   },
-  { path: '', redirectTo: '/tasks', pathMatch: 'full' },
+  { path: 'backlog', component: ToDoListComponent },
+  { path: 'board', component: BoardComponent },
+  { path: '', redirectTo: '/backlog', pathMatch: 'full' },
   { path: '**', component: PageNotFoundComponent },
 ];
