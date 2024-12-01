@@ -61,6 +61,7 @@ export class BoardComponent implements OnDestroy {
       .subscribe();
   }
 
+  //Добавить позже позицию в интерфейс задачи, запоминать и учитывать ее при перемещении, добавить подсветку столбца,  куда перемещаем (сделаю после закрытия всех ддомашек)
   drop(event: CdkDragDrop<Task[]>): void {
     this.ngZone.run(() => {
       if (event.previousContainer === event.container) {
