@@ -19,6 +19,17 @@
   box-sizing: border-box;
 }
 
+.task-list-container {
+  flex: 1;
+  padding: 10px;
+  border-right: 1px solid #ccc;
+}
+
+.task-details-container {
+  flex: 1;
+  padding: 10px;
+}
+
 .description-container {
   width: 300px;
   padding: 20px;

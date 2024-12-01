@@ -1,16 +1,28 @@
 {
   "tasks": [
     {
-      "id": "1",
-      "text": "Buy a Porsche 911",
-      "description": "Purchase a new Porsche car",
+      "id": "67fceef8-4363-4313-959c-e9931ea01c01",
+      "text": "Мама помоги сделать уроки!",
+      "description": "Делай сам, ленивая попа!!!",
       "status": true
     },
     {
-      "id": "2",
-      "text": "Take a walk with the dog",
-      "description": "Walk the dog in the park",
-      "status": false
+      "id": "dac17cd3-f706-4369-b142-f5272842aeb7",
+      "text": "Папа, купи рыбу на ужин",
+      "description": "Дикий лосось",
+      "status": true
+    },
+    {
+      "id": "9dc318c9-cf22-43cf-95b3-3eb0dc319379",
+      "text": "Новая интересная задача!",
+      "description": "Я ее делаю со слезами на глазах",
+      "status": true
+    },
+    {
+      "id": "0938e762-3a4a-4209-a87f-b25a62b26582",
+      "text": "Приготовить чак-чак",
+      "description": "Рецепт:",
+      "status": true
     }
   ]
 }

@@ -1,4 +1,9 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Output,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TaskFilterComponent } from '../task-filter/task-filter.component';
 import { FilterOption } from '../task-filter/filter-option.interface';
@@ -9,6 +14,7 @@ import { FilterOption } from '../task-filter/filter-option.interface';
   imports: [CommonModule, TaskFilterComponent],
   templateUrl: './task-control-panel.component.html',
   styleUrls: ['./task-control-panel.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TaskControlPanelComponent {
   @Output() filterChange: EventEmitter<string | null> = new EventEmitter<

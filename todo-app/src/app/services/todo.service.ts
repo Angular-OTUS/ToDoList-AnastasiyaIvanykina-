@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, BehaviorSubject, Subscription, EMPTY } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
@@ -87,6 +87,18 @@ export class TodoService implements OnDestroy {
     );
   }
 
+  getTaskById(id: string): Observable<Task> {
+    return this.http.get<Task>(`${this.apiUrl}/${id}`).pipe(
+      tap((task) => console.log('Fetched Task:', task)),
+      catchError(this.handleError),
+    );
+  }
+  private handleError(error: HttpErrorResponse): Observable<never> {
+    console.error('An error occurred:', error.message);
+    return throwError(
+      () => new Error('Something bad happened; please try again later.'),
+    );
+  }
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }

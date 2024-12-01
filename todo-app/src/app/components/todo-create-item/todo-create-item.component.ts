@@ -1,4 +1,10 @@
-import { Component, EventEmitter, Output, OnDestroy } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Output,
+  OnDestroy,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   ReactiveFormsModule,
@@ -27,6 +33,7 @@ import { Subscription } from 'rxjs';
   ],
   templateUrl: './todo-create-item.component.html',
   styleUrls: ['./todo-create-item.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TodoCreateItemComponent implements OnDestroy {
   @Output() taskCreated = new EventEmitter<TaskCreate>();
