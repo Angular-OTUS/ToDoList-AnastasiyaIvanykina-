@@ -27,11 +27,11 @@ export class ToastsComponent implements OnInit, OnDestroy {
   }
 
   private subscribeToToasts(): void {
-    this.toastSubscription = this.toastService
-      .getToasts()
-      .subscribe((toasts) => {
+    this.toastSubscription = this.toastService.toasts$.subscribe(
+      (toasts: string[]) => {
         this.toasts = toasts;
-      });
+      },
+    );
   }
 
   public removeToast(index: number): void {
