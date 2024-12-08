@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, BehaviorSubject, Subscription, EMPTY } from 'rxjs';
+import { Observable, BehaviorSubject, Subscription } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 
@@ -23,21 +23,24 @@ export class TodoService implements OnDestroy {
   private subscriptions: Subscription = new Subscription();
 
   constructor(private http: HttpClient) {
-    this.loadTasks();
+    this.loadTasks().subscribe({
+      next: (tasks) => {
+        console.log('Tasks loaded successfully:', tasks);
+      },
+      error: (error) => {
+        console.error('Failed to load tasks:', error);
+      },
+    });
   }
 
-  private loadTasks(): void {
-    const loadTasksSubscription = this.http
-      .get<Task[]>(this.apiUrl)
-      .pipe(
-        tap((tasks) => this.tasksSubject.next(tasks)),
-        catchError((error) => {
-          console.error('Error loading tasks:', error);
-          return EMPTY;
-        }),
-      )
-      .subscribe();
-    this.subscriptions.add(loadTasksSubscription);
+  private loadTasks(): Observable<Task[]> {
+    return this.http.get<Task[]>(this.apiUrl).pipe(
+      tap((tasks) => this.tasksSubject.next(tasks)),
+      catchError((error) => {
+        console.error('Error loading tasks:', error);
+        return throwError(() => new Error('Error loading tasks'));
+      }),
+    );
   }
 
   getTasks(): Observable<Task[]> {
@@ -93,12 +96,14 @@ export class TodoService implements OnDestroy {
       catchError(this.handleError),
     );
   }
+
   private handleError(error: HttpErrorResponse): Observable<never> {
     console.error('An error occurred:', error.message);
     return throwError(
       () => new Error('Something bad happened; please try again later.'),
     );
   }
+
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }
