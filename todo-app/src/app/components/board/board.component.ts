@@ -45,8 +45,7 @@ export class BoardComponent implements OnDestroy {
   }
 
   loadTasks(): void {
-    this.todoService
-      .getTasks()
+    this.todoService.tasks$
       .pipe(
         takeUntil(this.destroy$),
         tap({
@@ -60,8 +59,7 @@ export class BoardComponent implements OnDestroy {
       )
       .subscribe();
   }
-
-  //Добавить позже позицию в интерфейс задачи, запоминать и учитывать ее при перемещении, добавить подсветку столбца,  куда перемещаем (сделаю после закрытия всех ддомашек)
+  //Добавить позже позицию в интерфейс задачи, запоминать и учитывать ее при перемещении, добавить подсветку столбца,  куда перемещаем (сделаю после закрытия всех домашек)
   drop(event: CdkDragDrop<Task[]>): void {
     this.ngZone.run(() => {
       if (event.previousContainer === event.container) {

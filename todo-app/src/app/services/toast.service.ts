@@ -6,18 +6,13 @@ import { BehaviorSubject, Observable } from 'rxjs';
 })
 export class ToastService {
   private toastsSubject = new BehaviorSubject<string[]>([]);
-  private toasts: string[] = this.toastsSubject.value;
-
-  getToasts(): Observable<string[]> {
-    return this.toastsSubject.asObservable();
-  }
+  public toasts$: Observable<string[]> = this.toastsSubject.asObservable();
 
   showToast(message: string): void {
-    this.toasts.push(message);
-    this.toastsSubject.next([...this.toasts]);
+    const currentToasts = this.toastsSubject.value;
+    this.toastsSubject.next([...currentToasts, message]);
     setTimeout(() => {
-      this.toasts.shift();
-      this.toastsSubject.next([...this.toasts]);
+      this.removeToast(0);
     }, 3000);
   }
 
@@ -30,7 +25,8 @@ export class ToastService {
   }
 
   removeToast(index: number): void {
-    this.toasts.splice(index, 1);
-    this.toastsSubject.next([...this.toasts]);
+    const currentToasts = this.toastsSubject.value;
+    currentToasts.splice(index, 1);
+    this.toastsSubject.next([...currentToasts]);
   }
 }
