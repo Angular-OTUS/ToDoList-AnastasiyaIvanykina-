@@ -79,7 +79,7 @@ export class ToDoListComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.isLoading = true;
     setTimeout(() => {
-      this.tasks$ = this.todoService.getTasks();
+      this.tasks$ = this.todoService.tasks$;
       this.filteredTasks$ = combineLatest([
         this.tasks$,
         this.filterSubject,

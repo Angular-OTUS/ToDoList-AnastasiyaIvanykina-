@@ -1,4 +1,4 @@
-import { Component, OnDestroy, NgZone } from '@angular/core';
+import { Component, OnInit, OnDestroy, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TodoService, Task } from '../../services/todo.service';
 import { Subject } from 'rxjs';
@@ -9,17 +9,20 @@ import {
   transferArrayItem,
   DragDropModule,
 } from '@angular/cdk/drag-drop';
+import { LoadingSpinnerComponent } from '../../shared/loading-spinner/loading-spinner.component';
+import { LoaderService } from '../../services/loader.service';
 
 @Component({
   selector: 'app-board',
   standalone: true,
-  imports: [CommonModule, DragDropModule],
+  imports: [CommonModule, DragDropModule, LoadingSpinnerComponent],
   templateUrl: './board.component.html',
   styleUrls: ['./board.component.css'],
 })
-export class BoardComponent implements OnDestroy {
+export class BoardComponent implements OnInit, OnDestroy {
   tasks: Task[] = [];
   private destroy$ = new Subject<void>();
+  public isLoading: boolean = true;
 
   backlogTitle: string = 'Backlog';
   inProgressTitle: string = 'Pending';
@@ -28,8 +31,27 @@ export class BoardComponent implements OnDestroy {
   constructor(
     private todoService: TodoService,
     private ngZone: NgZone,
+    private loaderService: LoaderService,
   ) {
     this.loadTasks();
+  }
+
+  ngOnInit(): void {
+    this.initializeLoader();
+  }
+
+  initializeLoader(): void {
+    this.loaderService.loaderState$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((state) => {
+        this.isLoading = state;
+      });
+
+    this.loaderService.showLoader();
+
+    setTimeout(() => {
+      this.loaderService.hideLoader();
+    }, 5000);
   }
 
   get backlogTasks(): Task[] {
@@ -45,8 +67,7 @@ export class BoardComponent implements OnDestroy {
   }
 
   loadTasks(): void {
-    this.todoService
-      .getTasks()
+    this.todoService.tasks$
       .pipe(
         takeUntil(this.destroy$),
         tap({
@@ -61,7 +82,6 @@ export class BoardComponent implements OnDestroy {
       .subscribe();
   }
 
-  //Добавить позже позицию в интерфейс задачи, запоминать и учитывать ее при перемещении, добавить подсветку столбца,  куда перемещаем (сделаю после закрытия всех ддомашек)
   drop(event: CdkDragDrop<Task[]>): void {
     this.ngZone.run(() => {
       if (event.previousContainer === event.container) {
@@ -86,7 +106,6 @@ export class BoardComponent implements OnDestroy {
   }
 
   updateTaskStatus(task: Task, containerId: string): void {
-    console.log(`Updating task status for task ${task.id} to ${containerId}`);
     task.status =
       containerId === 'completed'
         ? true
@@ -97,9 +116,7 @@ export class BoardComponent implements OnDestroy {
       .updateTask(task)
       .pipe(
         tap({
-          next: () => {
-            console.log(`Task ${task.id} updated successfully`);
-          },
+          next: () => {},
           error: (err) => {
             console.error(`Failed to update task ${task.id}`, err);
           },

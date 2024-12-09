@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { FilterOption } from './filter-option.interface';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-task-filter',
@@ -18,8 +19,16 @@ export class TaskFilterComponent {
     string | null
   >();
   public selectedFilter?: string;
+  private filterSubject: BehaviorSubject<string | null> = new BehaviorSubject<
+    string | null
+  >(null);
 
   onFilterChange(filter: string | null): void {
+    this.filterSubject.next(filter);
     this.filterChange.emit(filter);
+  }
+
+  get filter$() {
+    return this.filterSubject.asObservable();
   }
 }

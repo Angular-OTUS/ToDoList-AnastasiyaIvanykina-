@@ -15,7 +15,7 @@ export class TaskEffects {
     this.actions$.pipe(
       ofType(loadTasks),
       mergeMap(() =>
-        this.todoService.getTasks().pipe(
+        this.todoService.tasks$.pipe(
           map((tasks) => loadTasksSuccess({ tasks })),
           catchError((error) => of(loadTasksFailure({ error }))),
         ),
