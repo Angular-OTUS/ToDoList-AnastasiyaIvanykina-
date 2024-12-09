@@ -37,6 +37,10 @@ export class BoardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.initializeLoader();
+  }
+
+  initializeLoader(): void {
     this.loaderService.loaderState$
       .pipe(takeUntil(this.destroy$))
       .subscribe((state) => {

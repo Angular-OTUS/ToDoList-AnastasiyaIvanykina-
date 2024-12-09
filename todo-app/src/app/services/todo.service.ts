@@ -21,23 +21,24 @@ export class TodoService implements OnDestroy {
   private subscriptions: Subscription = new Subscription();
 
   constructor(private http: HttpClient) {
-    this.loadTasks().subscribe({
-      next: (tasks) => {
-        console.log('Tasks loaded successfully:', tasks);
-      },
-      error: (error) => {
-        console.error('Failed to load tasks:', error);
-      },
-    });
+    this.loadTasks()
+      .pipe(
+        catchError((error) => {
+          console.error('Failed to load tasks:', error);
+          return throwError(() => new Error('Error loading tasks'));
+        }),
+      )
+      .subscribe({
+        next: (tasks) => {
+          console.log('Tasks loaded successfully:', tasks);
+        },
+      });
   }
 
   private loadTasks(): Observable<Task[]> {
     return this.http.get<Task[]>(this.apiUrl).pipe(
       tap((tasks) => this._tasksSubject.next(tasks)),
-      catchError((error) => {
-        console.error('Error loading tasks:', error);
-        return throwError(() => new Error('Error loading tasks'));
-      }),
+      catchError(this.handleError),
     );
   }
 
