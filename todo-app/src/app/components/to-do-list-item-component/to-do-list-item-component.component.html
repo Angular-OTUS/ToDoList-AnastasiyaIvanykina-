@@ -3,12 +3,12 @@
     class="task-item"
     (click)="toggleDescription($event)"
     [appTooltip]="
-      selectedItemId === item.id ? 'Hide description' : 'Show description'
+      selectedItemId === item.id ? hideDescriptionText : showDescriptionText
     "
   >
     <span class="tooltip">{{
-      selectedItemId === item.id ? 'Hide description' : 'Show description'
-    }}</span>
+      selectedItemId === item.id ? hideDescriptionText : showDescriptionText
+      }}</span>
     <span>{{ item.text }}</span>
   </li>
   <textarea
@@ -20,6 +20,6 @@
     [title]="deleteButtonTitle"
     [buttonClasses]="{ 'button--delete': true }"
     (click)="deleteItem($event)"
-    tooltipText="Delete this task"
+    [tooltipText]="'deleteTaskTooltip' | translate"
   ></app-button>
 </div>

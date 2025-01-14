@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ToastService } from '../../services/toast.service';
 import { Subscription } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-toasts',
@@ -13,6 +14,8 @@ import { Subscription } from 'rxjs';
 export class ToastsComponent implements OnInit, OnDestroy {
   public toasts: string[] = [];
   private toastSubscription!: Subscription;
+  private successMessages = ['успешно создана'];
+  private errorMessages = ['Произошла ошибка', 'успешно удалена'];
 
   constructor(private toastService: ToastService) {}
 
@@ -27,21 +30,30 @@ export class ToastsComponent implements OnInit, OnDestroy {
   }
 
   private subscribeToToasts(): void {
-    this.toastSubscription = this.toastService.toasts$.subscribe(
-      (toasts: string[]) => {
-        this.toasts = toasts;
-      },
-    );
+    this.toastSubscription = this.toastService.toasts$
+      .pipe(
+        tap({
+          next: (toasts: string[]) => {
+            this.toasts = toasts;
+          },
+          error: (error) => {
+            console.error('Ошибка при получении уведомлений:', error);
+          },
+        }),
+      )
+      .subscribe();
   }
 
   public removeToast(index: number): void {
     this.toastService.removeToast(index);
+    this.toasts.splice(index, 1);
   }
 
   public getToastClass(toast: string): string {
-    if (toast.includes('Success')) {
+    if (this.successMessages.some((msg) => toast.includes(msg))) {
       return 'toast-success';
-    } else if (toast.includes('Error')) {
+    }
+    if (this.errorMessages.some((msg) => toast.includes(msg))) {
       return 'toast-error';
     }
     return '';

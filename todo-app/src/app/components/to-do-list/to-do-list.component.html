@@ -3,7 +3,7 @@
 ></app-task-control-panel>
 <div class="outer-container">
   <div class="task-list-container">
-    <h1 class="title">{{ title }}</h1>
+    <h1 class="title">{{ 'title' | translate }}</h1>
     <app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
     <ul class="task-list" *ngIf="!isLoading">
       <li
@@ -25,9 +25,9 @@
               <app-button
                 [buttonClasses]="{ 'button--delete': true }"
                 (click)="deleteTask(task.id, $event)"
-                tooltipText="Delete this task"
+                [tooltipText]="'deleteTaskTooltip' | translate"
               >
-                {{ deleteButtonTitle }}
+                {{ 'deleteButtonTitle' | translate }}
               </app-button>
             </div>
           </form>

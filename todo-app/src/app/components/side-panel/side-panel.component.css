@@ -1,9 +1,9 @@
 .side-panel {
   width: 150px;
   position: fixed;
-  top: 0;
+  top: 60px;
   left: 0;
-  height: 100%;
+  height: calc(100% - 60px);
   background-color: #f8f9fa;
   padding: 20px;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
@@ -15,7 +15,7 @@
 }
 
 .side-panel nav {
-  margin-top: 50px;
+  margin-top: 10px;
 }
 
 .side-panel nav ul {
@@ -26,6 +26,9 @@
 .side-panel nav ul li {
   margin-bottom: 10px;
   transition: background-color 0.3s;
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .side-panel nav ul li:hover {
@@ -35,22 +38,33 @@
 
 .side-panel nav ul li a {
   display: block;
-  padding: 10px;
   text-decoration: none;
+  padding: 10px;
   color: #333;
   font-weight: bold;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.side-panel.collapsed nav ul li a {
+  padding: 5px;
+  font-size: 12px;
+  text-align: center;
 }
 
 .toggle-button {
   position: absolute;
-  top: 20px;
+  top: 10px;
   right: 20px;
   background: none;
   border: none;
   cursor: pointer;
   font-size: 18px;
-  margin-bottom: 20px;
   transition: color 0.3s;
+  padding: 5px;
 }
 
 .toggle-button:hover {
