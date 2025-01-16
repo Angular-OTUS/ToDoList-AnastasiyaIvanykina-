@@ -11,11 +11,17 @@ import {
 } from '@angular/cdk/drag-drop';
 import { LoadingSpinnerComponent } from '../../shared/loading-spinner/loading-spinner.component';
 import { LoaderService } from '../../services/loader.service';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-board',
   standalone: true,
-  imports: [CommonModule, DragDropModule, LoadingSpinnerComponent],
+  imports: [
+    CommonModule,
+    DragDropModule,
+    LoadingSpinnerComponent,
+    TranslateModule,
+  ],
   templateUrl: './board.component.html',
   styleUrls: ['./board.component.css'],
 })
@@ -24,16 +30,20 @@ export class BoardComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   public isLoading: boolean = true;
 
-  backlogTitle: string = 'Backlog';
-  inProgressTitle: string = 'Pending';
-  completedTitle: string = 'Completed';
+  backlogTitle: string;
+  inProgressTitle: string;
+  completedTitle: string;
 
   constructor(
     private todoService: TodoService,
     private ngZone: NgZone,
     private loaderService: LoaderService,
+    private translate: TranslateService,
   ) {
     this.loadTasks();
+    this.backlogTitle = this.translate.instant('backlogTitle');
+    this.inProgressTitle = this.translate.instant('inProgressTitle');
+    this.completedTitle = this.translate.instant('completedTitle');
   }
 
   ngOnInit(): void {

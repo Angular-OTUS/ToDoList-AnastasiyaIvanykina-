@@ -12,6 +12,15 @@ import { TaskEffects } from './app/store/effects/task.effects';
 import { environment } from './environments/environment';
 import { provideRouter } from '@angular/router';
 import { routes } from './app/app.routes';
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { HttpClient } from '@angular/common/http';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { TranslationService } from './app/services/translation.service';
+import { languageReducer } from './app/store/reducers/language.reducer';
+
+export function HttpLoaderFactory(http: HttpClient) {
+  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+}
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -19,13 +28,21 @@ bootstrapApplication(AppComponent, {
     provideAnimations(),
     provideHttpClient(),
     provideRouter(routes),
-    provideStore({ tasks: taskReducer }),
+    provideStore({ tasks: taskReducer, language: languageReducer }),
     provideEffects([TaskEffects]),
     importProvidersFrom(
       StoreDevtoolsModule.instrument({
         maxAge: 25,
         logOnly: environment.production,
       }),
+      TranslateModule.forRoot({
+        loader: {
+          provide: TranslateLoader,
+          useFactory: HttpLoaderFactory,
+          deps: [HttpClient],
+        },
+      }),
     ),
+    TranslationService,
   ],
 }).catch((err) => console.error(err));

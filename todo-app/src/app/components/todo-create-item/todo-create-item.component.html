@@ -5,7 +5,8 @@
         matInput
         class="task-input"
         formControlName="newTask"
-        placeholder="New task"
+        [placeholder]="newTaskPlaceholder"
+        i18n-placeholder="@@newTaskPlaceholder"
       />
     </mat-form-field>
     <mat-form-field class="task-input-field">
@@ -13,13 +14,15 @@
         matInput
         class="task-input"
         formControlName="newDescription"
-        placeholder="Task description"
+        [placeholder]="taskDescriptionPlaceholder"
+        i18n-placeholder="@@newDescriptionPlaceholder"
       ></textarea>
     </mat-form-field>
     <app-button
       [disabled]="addTaskForm.invalid"
       [buttonClasses]="{ 'button--add': true }"
       tooltipText="Add this task"
+      i18n-tooltipText="@@addTaskTooltip"
     >
       {{ addButtonTitle }}
     </app-button>

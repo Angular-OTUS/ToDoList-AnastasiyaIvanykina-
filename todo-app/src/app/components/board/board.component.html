@@ -4,7 +4,7 @@
 <div *ngIf="!isLoading">
   <div class="board-container" cdkDropListGroup>
     <div class="column" id="backlog">
-      <h2>{{ backlogTitle }}</h2>
+      <h2>{{ 'backlogTitle' | translate }}</h2>
       <div
         cdkDropList
         id="backlog"
@@ -20,7 +20,7 @@
     </div>
 
     <div class="column" id="in-progress">
-      <h2>{{ inProgressTitle }}</h2>
+      <h2>{{ 'inProgressTitle' | translate }}</h2>
       <div
         cdkDropList
         id="in-progress"
@@ -36,7 +36,7 @@
     </div>
 
     <div class="column" id="completed">
-      <h2>{{ completedTitle }}</h2>
+      <h2>{{ 'completedTitle' | translate }}</h2>
       <div
         cdkDropList
         id="completed"

@@ -20,13 +20,17 @@
           formControlName="editStatus"
         />
         <mat-form-field class="app-edit-task-field">
-          <input matInput formControlName="editTask" placeholder="Edit task" />
+          <input
+            matInput
+            formControlName="editTask"
+            placeholder="{{ 'editTaskPlaceholder' | translate }}"
+          />
         </mat-form-field>
         <mat-form-field class="app-edit-task-field">
           <textarea
             matInput
             formControlName="editDescription"
-            placeholder="Edit description"
+            placeholder="{{ 'editDescriptionPlaceholder' | translate }}"
           ></textarea>
         </mat-form-field>
         <div class="app-button-group app-edit-mode-buttons">
@@ -35,7 +39,7 @@
             class="app-button--save"
             [disabled]="!editTaskForm.dirty || !editTaskForm.valid"
           >
-            {{ saveButtonTitle }}
+            {{ 'saveButtonTitle' | translate }}
           </button>
         </div>
       </div>

@@ -3,5 +3,18 @@
   "trailingComma": "all",
   "printWidth": 80,
   "tabWidth": 2,
-  "semi": true
+  "semi": true,
+  "plugins": ["@prettier/plugin-xml"],
+  "overrides": [
+    {
+      "files": "*.xlf",
+      "options": {
+        "parser": "xml",
+        "xmlSelfClosingSpace": false,
+        "xmlWhitespaceSensitivity": "ignore",
+        "xmlSortAttributes": false,
+        "xmlSortTags": false
+      }
+    }
+  ]
 }

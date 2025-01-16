@@ -24,6 +24,7 @@ import { CommonModule } from '@angular/common';
 import { ButtonComponent } from '../button/button.component';
 import { TaskState } from '../../store/reducers/task.reducer';
 import { EditStateService } from '../../services/edit-state.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   standalone: true,
@@ -36,12 +37,12 @@ import { EditStateService } from '../../services/edit-state.service';
     MatFormFieldModule,
     MatInputModule,
     ButtonComponent,
+    TranslateModule,
   ],
 })
 export class AppToDoItemViewComponent implements OnInit, OnDestroy {
   @Input() task!: Task;
   public editTaskForm: FormGroup;
-  public saveButtonTitle: string = 'Save';
   public isEditing: boolean = false;
   private destroy$: Subject<void> = new Subject<void>();
 
